@@ -23,13 +23,9 @@ public class GenerateMap : MonoBehaviour
     [SerializeField] int seed;
     [SerializeField] float heightmultiplier;
     MapData mapData= new MapData();
-
     public Biomes[] Biomes;
 
-    //public GameObject[] biome1 = new GameObject[4];
-    //public GameObject[] biome2 = new GameObject[4];
-    //public GameObject[] biome3 = new GameObject[4];
-    //public GameObject[] biome4 = new GameObject[4];
+    static Dictionary<Vector3, bool> checkList;
 
     public bool autoUpdate;
 
@@ -42,6 +38,7 @@ public class GenerateMap : MonoBehaviour
         mapData.ColorData = noiseTexture.DrawTexture(mapData.NoiseValueData);
         GenerateMesh.UpdateMesh(mapData.NoiseValueData, heightmultiplier, curve, LevelOfDetail, MapSizeMultiplier);
         MakeBiomes();
+        PlaceAssets();
 
 
     }
@@ -54,17 +51,72 @@ public class GenerateMap : MonoBehaviour
     }
 
     //chunk = tiles , tilesize is range between vertices aka scale of main Map
-    public void CreateChunkData()
-    {
-        mapData.chunkVertexData = GenerateMesh.GenerateTile();
-    }
+    //public void CreateChunkData()
+    //{
+    //    mapData.chunkVertexData = GenerateMesh.GenerateTile();
+    //}
 
     public void MakeBiomes()
     {
-        
-        int rndmIndex = Random.Range(0, 4);
-        GenerateBiomes.GenerateRndmBiomes();
-        
+        System.Random rand = new System.Random(seed);
+        int amountOfBiomes = rand.Next(20, 30);
+        int rndmIndex;
+        List<Vector3> tempList = new();
+
+        for (int i = 0; i < amountOfBiomes; i++)
+        {
+            rndmIndex = rand.Next(0, Biomes.Length);
+
+            if (rndmIndex == 0)
+            {
+                tempList= GenerateBiomes.GenerateRndmBiomes(Biomes[0]);
+
+                foreach (Vector3 item in tempList)
+                {
+                    Biomes[0].vertexPos.Add(item);
+                }
+                tempList.Clear();
+            }
+            else if (rndmIndex == 1)
+            {
+                tempList = GenerateBiomes.GenerateRndmBiomes(Biomes[1]);
+
+                foreach (Vector3 item in tempList)
+                {
+                    Biomes[1].vertexPos.Add(item);
+                }
+                tempList.Clear();
+            }
+            else if (rndmIndex == 2)
+            {
+                tempList = GenerateBiomes.GenerateRndmBiomes(Biomes[2]);
+                foreach (Vector3 item in tempList)
+                {
+                    Biomes[2].vertexPos.Add(item);
+                }
+                tempList.Clear();
+            }
+        }
+
+    }
+public void PlaceAssets()
+{
+            checkList = new Dictionary<Vector3, bool>();
+
+        for (int i = 0; i < Biomes.Length; i++)
+        {
+            List<Vector3> arrayToIterate = Biomes[i].vertexPos;
+            foreach (Vector3 e in arrayToIterate)
+            {
+                //improve this chance to generate asset later*****************************************************************************************************
+                if(!checkList.ContainsKey(e))
+                checkList.Add(e, true);
+                Instantiate(Biomes[i].assets[Random.Range(0, Biomes[i].assets.Length)], new(e.x, e.y, e.z), Quaternion.Euler(0,Random.Range(0,181),0));
+                
+            }
+
+        }
+
     }
 
 }
@@ -84,12 +136,15 @@ public struct MapData
         chunkVertexData = chunks;
     }
 }
+
 [System.Serializable]
 public struct Biomes
 {
     public string name;
     public AnimationCurve curve;
     public GameObject[] assets;
+    public List<Vector3> vertexPos;
+
 }
 
 

@@ -53,6 +53,8 @@ public static class GenerateMesh
         //myMesh.vertices = vertexArr;
         //myMesh.triangles = triangleArr;
         //myMesh.uv = uvArr;
+
+        //NO NEED TO CREATE SHIT HERE CREATE IN GENERATE MAP INSTEAD OR GENERATE BIOMES?!
         GameObject terrainObject = GameObject.CreatePrimitive(PrimitiveType.Plane);
         terrainObject.GetComponent<MeshFilter>().sharedMesh.Clear();
 
