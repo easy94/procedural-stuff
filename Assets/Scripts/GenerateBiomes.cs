@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.InteropServices.WindowsRuntime;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public static class GenerateBiomes
@@ -17,7 +16,7 @@ public static class GenerateBiomes
         Vector3[] bigArr = test.GetComponent<MeshFilter>().sharedMesh.vertices;
 
         //array to hold biome vertices + variables for calculating max length and so on **** not finished because still need to figure how to find positions that are not yet taken by other biome
-        int rndmSize = rand.Next(6,11);
+        int rndmSize = rand.Next(11,17);
         Vector3[] verticesForBiome = new Vector3[rndmSize*rndmSize];
         int firstVertexPos = Random.Range(0, (int)Mathf.Sqrt(bigArr.Length) - (int)Mathf.Sqrt(verticesForBiome.Length));
         int vertexPosMulti = Random.Range(0, (int)(bigArr.Length-((rndmSize*rndmSize)+(rndmSize*(int)Mathf.Sqrt(bigArr.Length)))) / ((int)Mathf.Sqrt(bigArr.Length)));

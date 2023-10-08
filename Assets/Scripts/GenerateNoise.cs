@@ -10,8 +10,6 @@ public static class GenerateNoise       // static class cause only need one inst
     {
         int sizeAfterMulti = size;
 
-
-
         Vector2[] offsetArr = new Vector2[octaves];
         System.Random random = new System.Random(seed);
 
@@ -23,7 +21,7 @@ public static class GenerateNoise       // static class cause only need one inst
             offsetArr[i] = new (rndmoffsetX, rndmoffsetY);
         }
         
-        //create noisemap based on 145 base size multiplied by sizeMultiplier inserted in inspector - sizeMult cause divided by 3 issues for simplification factor
+        //create noisemap based on 145 base size multiplied by sizeMultiplier inserted in inspector
         float[,] noiseMap = new float[sizeAfterMulti, sizeAfterMulti];
         float minNoiseHeight = float.MaxValue;
         float maxNoiseHeight = float.MinValue;

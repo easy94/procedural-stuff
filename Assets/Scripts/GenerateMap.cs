@@ -1,16 +1,15 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
+using UnityEditor;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
 public class GenerateMap : MonoBehaviour
 {
     public AnimationCurve curve;
-    //[SerializeField] MeshFilter myMeshFilter;
-    //[SerializeField] MeshCollider meshCollider;
-    DrawNoiseTexture noiseTexture;
+
+    [SerializeField] MeshCollider meshCollider;
+    //DrawNoiseTexture noiseTexture;
     [SerializeField] float Scale;
     [Range(1, 10)]
     [SerializeField] int MapSizeMultiplier;
@@ -22,7 +21,8 @@ public class GenerateMap : MonoBehaviour
     [SerializeField] float amp;
     [SerializeField] int seed;
     [SerializeField] float heightmultiplier;
-    MapData mapData= new MapData();
+    [SerializeField] Gradient gradient;
+    MapData mapData = new MapData();
     public Biomes[] Biomes;
 
     static Dictionary<Vector3, bool> checkList;
@@ -32,45 +32,41 @@ public class GenerateMap : MonoBehaviour
 
     public void DrawMapData()
     {
-        noiseTexture = FindObjectOfType<DrawNoiseTexture>();
+        //clear vertices before generating new mesh(from inspector) destroy childobjects
+        for (int i = meshCollider.transform.childCount; i > 0; --i)
+            DestroyImmediate(meshCollider.transform.GetChild(0).gameObject);
+
+        //noiseTexture = FindObjectOfType<DrawNoiseTexture>();
 
         mapData.NoiseValueData = GenerateNoiseMap();
-        mapData.ColorData = noiseTexture.DrawTexture(mapData.NoiseValueData);
-        GenerateMesh.UpdateMesh(mapData.NoiseValueData, heightmultiplier, curve, LevelOfDetail, MapSizeMultiplier);
-        MakeBiomes();
-        PlaceAssets();
-
+        mapData.MeshData = GenerateMesh.UpdateMesh(mapData.NoiseValueData, heightmultiplier, curve, LevelOfDetail, MapSizeMultiplier, meshCollider);
+        //MakeBiomes();
+        // PlaceAssets();
+        mapData.ColorData =GenerateVertexColor.PaintVerts(mapData.MeshData, gradient);
+        meshCollider.GetComponent<MeshFilter>().sharedMesh.colors = mapData.ColorData;
 
     }
 
     public float[,] GenerateNoiseMap()
     {
-        float[,] noiseMap = GenerateNoise.Generate(Mapwidth*MapSizeMultiplier, Scale, octaves, freq, amp, seed);                                         
-                                                                                              
+        float[,] noiseMap = GenerateNoise.Generate(Mapwidth * MapSizeMultiplier, Scale, octaves, freq, amp, seed);
+
         return noiseMap;
     }
-
-    //chunk = tiles , tilesize is range between vertices aka scale of main Map
-    //public void CreateChunkData()
-    //{
-    //    mapData.chunkVertexData = GenerateMesh.GenerateTile();
-    //}
 
     public void MakeBiomes()
     {
         System.Random rand = new System.Random(seed);
-        int amountOfBiomes = rand.Next(20, 30);
+        int amountOfBiomes = rand.Next(15, 30);
         int rndmIndex;
         List<Vector3> tempList = new();
 
         for (int i = 0; i < amountOfBiomes; i++)
         {
             rndmIndex = rand.Next(0, Biomes.Length);
-
             if (rndmIndex == 0)
             {
-                tempList= GenerateBiomes.GenerateRndmBiomes(Biomes[0]);
-
+                tempList = GenerateBiomes.GenerateRndmBiomes(Biomes[0]);
                 foreach (Vector3 item in tempList)
                 {
                     Biomes[0].vertexPos.Add(item);
@@ -80,7 +76,6 @@ public class GenerateMap : MonoBehaviour
             else if (rndmIndex == 1)
             {
                 tempList = GenerateBiomes.GenerateRndmBiomes(Biomes[1]);
-
                 foreach (Vector3 item in tempList)
                 {
                     Biomes[1].vertexPos.Add(item);
@@ -98,42 +93,60 @@ public class GenerateMap : MonoBehaviour
             }
         }
 
-    }
-public void PlaceAssets()
-{
-            checkList = new Dictionary<Vector3, bool>();
-
+        //get rid of stuttering in editor********************maybe reposition later **********
         for (int i = 0; i < Biomes.Length; i++)
         {
+            Biomes[i].vertexPos.Clear();
+        }
+    }
+    
+    //improveable**************
+    public void PlaceAssets()
+    {
+        //to save positions where object already has been placed
+        checkList = new Dictionary<Vector3, bool>();
+
+        for (int i = 0; i < Biomes.Length; i++)
+        {//get the vertexpositions this biom belongs to
             List<Vector3> arrayToIterate = Biomes[i].vertexPos;
             foreach (Vector3 e in arrayToIterate)
             {
-                //improve this chance to generate asset later*****************************************************************************************************
-                if(!checkList.ContainsKey(e))
-                checkList.Add(e, true);
-                Instantiate(Biomes[i].assets[Random.Range(0, Biomes[i].assets.Length)], new(e.x, e.y, e.z), Quaternion.Euler(0,Random.Range(0,181),0));
                 
+                if (!checkList.ContainsKey(e))
+                    checkList.Add(e, true);
+                //50% chance to not place item after adding position to checklist
+                if (Fiftyfifty()==true)
+                {
+                    GameObject newItem = Instantiate(Biomes[i].assets[Random.Range(0, Biomes[i].assets.Length)], new(e.x, e.y, e.z), Quaternion.Euler(0, Random.Range(0, 181), 0));
+                    newItem.transform.SetParent(meshCollider.transform);
+                }
             }
-
+        }
+        //for now this is best position for deleting stuttering editor
+        for (int i = 0; i < Biomes.Length; i++)
+        {
+            Biomes[i].vertexPos.Clear();
         }
 
     }
 
+    private bool Fiftyfifty()
+    {
+        return (Random.value * 1>.5f);
+    }
 }
-
 
 public struct MapData
 {
-    public List<Vector3[]> chunkVertexData;
     public float[,] NoiseValueData;
-    public Color32[] ColorData;
+    public Vector3[] MeshData;
+    public Color[] ColorData;
 
-
-    public MapData(float[,] noise, Color32[] color, List<Vector3[]> chunks)
+    public MapData(float[,] noise, Color[] color, Vector3[] verts)
     {
         NoiseValueData = noise;
         ColorData = color;
-        chunkVertexData = chunks;
+        MeshData = verts;
     }
 }
 
@@ -145,13 +158,14 @@ public struct Biomes
     public GameObject[] assets;
     public List<Vector3> vertexPos;
 
+
 }
 
 
 //MapData data = new MapData();
 //data.NoiseValueData = GenerateNoiseMap();
 
-//data.ColorData = noiseTexture.DrawTexture(data.NoiseValueData);
+//mapData.ColorData = noiseTexture.DrawTexture(mapData.NoiseValueData);
 
 
 
