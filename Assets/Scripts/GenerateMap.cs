@@ -13,7 +13,7 @@ public class GenerateMap : MonoBehaviour
     [SerializeField] float Scale;
     [Range(1, 10)]
     [SerializeField] int MapSizeMultiplier;
-    public static int Mapwidth = 145;
+    public static int Mapwidth = 241;
     [Range(0, 4)]
     [SerializeField] int LevelOfDetail;
     [SerializeField] int octaves;
@@ -44,6 +44,7 @@ public class GenerateMap : MonoBehaviour
         // PlaceAssets();
         mapData.ColorData =GenerateVertexColor.PaintVerts(mapData.MeshData, gradient);
         meshCollider.GetComponent<MeshFilter>().sharedMesh.colors = mapData.ColorData;
+        Debug.Log(mapData.MeshData.Length);
 
     }
 

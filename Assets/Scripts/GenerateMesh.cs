@@ -12,8 +12,8 @@ public static class GenerateMesh
         int height = noiseMap.GetLength(1);
 
         int reduceVertexFactor = (levelOfDetail == 0) ? 1 : levelOfDetail * 2;
-        int vertexPerLine = ((noiseMap.GetLength(0) - multi) / reduceVertexFactor) + 1;
-        //use this to split mesh when exceeding 150k
+        int vertexPerLine = ((noiseMap.GetLength(0) - 1) / reduceVertexFactor) + 1;
+
         int verticesInTotal = vertexPerLine * vertexPerLine;
 
         Vector2[] uvArr = new Vector2[vertexPerLine * vertexPerLine];
@@ -22,15 +22,18 @@ public static class GenerateMesh
 
         int j = 0;
         int k = 0;
+        Debug.Log(vertexArr.Length);
         //generate vertices array + triangle array + uv array
         for (int x = 0; x < width; x += reduceVertexFactor)
         {
             for (int y = 0; y < height; y += reduceVertexFactor)
             {
+                
+                //Debug.Log(k);
                 vertexArr[k] = new Vector3(x, (curve.Evaluate(noiseMap[x, y]) * heightmultiplier), y);
                 uvArr[k] = new Vector2((float)x / width, (float)y / height);
 
-                if (y < height - multi && x < height - multi)
+                if (y < height - 1 && x < height - 1)
                 {
                     //first triangle
 
@@ -53,6 +56,18 @@ public static class GenerateMesh
         {
             GameObject terrainChild = GameObject.CreatePrimitive(PrimitiveType.Plane);
             Mesh meshChild = new Mesh();
+
+            int currentLine = 0;
+            int endOfLine = vertexPerLine;
+            int startOfLine = 0 + (vertexPerLine * currentLine);
+            for (int x = 0; x < vertexPerLine/2; x++)
+            {
+                for (int y = 0; y < vertexPerLine/2; y++)
+                {
+                    
+
+                }
+            }
 
             terrainChild.transform.SetParent(terrainObject.transform);
         }
