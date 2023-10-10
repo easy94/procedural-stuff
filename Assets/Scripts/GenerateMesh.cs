@@ -22,7 +22,6 @@ public static class GenerateMesh
 
         int j = 0;
         int k = 0;
-        Debug.Log(vertexArr.Length);
         //generate vertices array + triangle array + uv array
         for (int x = 0; x < width; x += reduceVertexFactor)
         {

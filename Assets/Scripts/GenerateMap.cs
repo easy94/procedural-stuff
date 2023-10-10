@@ -10,10 +10,12 @@ public class GenerateMap : MonoBehaviour
 
     [SerializeField] MeshCollider meshCollider;
     //DrawNoiseTexture noiseTexture;
+    [SerializeField] int offSetX;
+    [SerializeField] int offSetY;
     [SerializeField] float Scale;
     [Range(1, 10)]
     [SerializeField] int MapSizeMultiplier;
-    public static int Mapwidth = 241;
+    public static int Mapwidth = 1921;
     [Range(0, 4)]
     [SerializeField] int LevelOfDetail;
     [SerializeField] int octaves;
@@ -25,10 +27,15 @@ public class GenerateMap : MonoBehaviour
     MapData mapData = new MapData();
     public Biomes[] Biomes;
 
+    private Vector3[] HEXARRAY;
+
+    public float hexagonRadiuses;
+
     static Dictionary<Vector3, bool> checkList;
 
     public bool autoUpdate;
-
+    // test normals for steepness
+    //Debug.Log(terrainObject.GetComponent<Mesh>().normals[0]);
 
     public void DrawMapData()
     {
@@ -40,65 +47,74 @@ public class GenerateMap : MonoBehaviour
 
         mapData.NoiseValueData = GenerateNoiseMap();
         mapData.MeshData = GenerateMesh.UpdateMesh(mapData.NoiseValueData, heightmultiplier, curve, LevelOfDetail, MapSizeMultiplier, meshCollider);
-        //MakeBiomes();
         // PlaceAssets();
         mapData.ColorData =GenerateVertexColor.PaintVerts(mapData.MeshData, gradient);
         meshCollider.GetComponent<MeshFilter>().sharedMesh.colors = mapData.ColorData;
         Debug.Log(mapData.MeshData.Length);
+        Debug.Log((float)(mapData.MeshData.Length - 1) * (mapData.MeshData.Length - 1)*6/2);
+        MakeBiomes();
 
     }
 
     public float[,] GenerateNoiseMap()
     {
-        float[,] noiseMap = GenerateNoise.Generate(Mapwidth * MapSizeMultiplier, Scale, octaves, freq, amp, seed);
+        float[,] noiseMap = GenerateNoise.Generate(Mapwidth * MapSizeMultiplier, Scale, octaves, freq, amp, seed, offSetX, offSetY);
 
         return noiseMap;
     }
 
+    private void OnDrawGizmos()
+    {
+        Gizmos.color = Color.yellow;
+
+    }
+
     public void MakeBiomes()
     {
-        System.Random rand = new System.Random(seed);
-        int amountOfBiomes = rand.Next(15, 30);
-        int rndmIndex;
-        List<Vector3> tempList = new();
+        HEXARRAY = GenerateBiomes.GenerateRndmBiomes(Biomes[0], mapData.MeshData, hexagonRadiuses);
 
-        for (int i = 0; i < amountOfBiomes; i++)
-        {
-            rndmIndex = rand.Next(0, Biomes.Length);
-            if (rndmIndex == 0)
-            {
-                tempList = GenerateBiomes.GenerateRndmBiomes(Biomes[0]);
-                foreach (Vector3 item in tempList)
-                {
-                    Biomes[0].vertexPos.Add(item);
-                }
-                tempList.Clear();
-            }
-            else if (rndmIndex == 1)
-            {
-                tempList = GenerateBiomes.GenerateRndmBiomes(Biomes[1]);
-                foreach (Vector3 item in tempList)
-                {
-                    Biomes[1].vertexPos.Add(item);
-                }
-                tempList.Clear();
-            }
-            else if (rndmIndex == 2)
-            {
-                tempList = GenerateBiomes.GenerateRndmBiomes(Biomes[2]);
-                foreach (Vector3 item in tempList)
-                {
-                    Biomes[2].vertexPos.Add(item);
-                }
-                tempList.Clear();
-            }
-        }
+        //System.Random rand = new System.Random(seed);
+        //int amountOfBiomes = rand.Next(15, 30);
+        //int rndmIndex;
+        //List<Vector3> tempList = new();
 
-        //get rid of stuttering in editor********************maybe reposition later **********
-        for (int i = 0; i < Biomes.Length; i++)
-        {
-            Biomes[i].vertexPos.Clear();
-        }
+        //for (int i = 0; i < amountOfBiomes; i++)
+        //{
+        //    rndmIndex = rand.Next(0, Biomes.Length);
+        //    if (rndmIndex == 0)
+        //    {
+        //        tempList = GenerateBiomes.GenerateRndmBiomes(Biomes[0]);
+        //        foreach (Vector3 item in tempList)
+        //        {
+        //            Biomes[0].vertexPos.Add(item);
+        //        }
+        //        tempList.Clear();
+        //    }
+        //    else if (rndmIndex == 1)
+        //    {
+        //        tempList = GenerateBiomes.GenerateRndmBiomes(Biomes[1]);
+        //        foreach (Vector3 item in tempList)
+        //        {
+        //            Biomes[1].vertexPos.Add(item);
+        //        }
+        //        tempList.Clear();
+        //    }
+        //    else if (rndmIndex == 2)
+        //    {
+        //        tempList = GenerateBiomes.GenerateRndmBiomes(Biomes[2]);
+        //        foreach (Vector3 item in tempList)
+        //        {
+        //            Biomes[2].vertexPos.Add(item);
+        //        }
+        //        tempList.Clear();
+        //    }
+        //}
+
+        ////get rid of stuttering in editor********************maybe reposition later **********
+        //for (int i = 0; i < Biomes.Length; i++)
+        //{
+        //    Biomes[i].vertexPos.Clear();
+        //}
     }
     
     //improveable**************

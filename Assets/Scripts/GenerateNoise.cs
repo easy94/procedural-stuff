@@ -6,7 +6,7 @@ using UnityEngine;
 public static class GenerateNoise       // static class cause only need one instance of this class
 {
 
-    public static float[,] Generate(int size, float scale, int octaves, float freq, float amp, int seed) // static needs to be cause class static
+    public static float[,] Generate(int size, float scale, int octaves, float freq, float amp, int seed, int offSetX, int offSetY) // static needs to be cause class static
     {
         int sizeAfterMulti = size;
 
@@ -16,8 +16,8 @@ public static class GenerateNoise       // static class cause only need one inst
 
         for(int i = 0; i < octaves; i++)
         {
-            float rndmoffsetX = random.Next(-10000, 10000);
-            float rndmoffsetY = random.Next(-10000, 10000);
+            float rndmoffsetX = random.Next(-10000, 10000)+offSetX;
+            float rndmoffsetY = random.Next(-10000, 10000)+offSetY;
             offsetArr[i] = new (rndmoffsetX, rndmoffsetY);
         }
         
@@ -39,8 +39,8 @@ public static class GenerateNoise       // static class cause only need one inst
 
                 for (int i = 0; i < octaves; i++)
                 {
-                    float tempX = (x-halfwidth) / scale * frequency+offsetArr[i].x;
-                    float tempY = (y-halfheight) / scale * frequency+offsetArr[i].y;
+                    float tempX = (x - halfwidth + offsetArr[i].x) * frequency / scale;
+                    float tempY = (y - halfheight + offsetArr[i].y) * frequency / scale;
 
                     float perlinVal = Mathf.PerlinNoise(tempY, tempX);
 
