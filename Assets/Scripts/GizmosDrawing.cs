@@ -15,9 +15,9 @@ public class GizmosDrawing : MonoBehaviour
     private void OnDrawGizmos()
     {
 
-    float hexrad = 1920/100*6;
-    float heightDist = hexrad * Mathf.Sqrt(3);
-    float widthDist = 1.5f * hexrad;
+    float r = 1920/100*6;
+    float heightDist = r * Mathf.Sqrt(3);
+    float widthDist = 1.5f * r;
         Vector3[] hexaPositions = new Vector3[120];
         //flat top
         int k = 0;
@@ -26,9 +26,9 @@ public class GizmosDrawing : MonoBehaviour
             for (int y = 0; y < 10; ++y)
             {
                 if(x%2==0 || x == 0)
-                hexaPositions[k] = new((widthDist * x)+hexrad/2/2, 0, (heightDist * y)-(heightDist/2)+(0.75f*heightDist));
+                hexaPositions[k] = new((widthDist * x)+r/2/2, 0, (heightDist * y)-(heightDist/2)+(0.75f*heightDist));
                 else
-                    hexaPositions[k] = new(widthDist * x+hexrad/2/2, 0, (heightDist * y)+0.75f*heightDist);
+                    hexaPositions[k] = new(widthDist * x+r/2/2, 0, (heightDist * y)+0.75f*heightDist);
                 ++k;
             }
         }
@@ -36,12 +36,12 @@ public class GizmosDrawing : MonoBehaviour
         Dictionary <Vector3,int> hexagonNeighbors = new Dictionary <Vector3,int>();
 
 
-        Vector3 topLeftOffset = new Vector3(-hexrad/2, 50, +hexrad/2*Mathf.Sqrt(3));
-        Vector3 topRightOffset = new Vector3(+hexrad / 2, 50, +hexrad/2*Mathf.Sqrt(3));
-        Vector3 left = new Vector3(-hexrad, 50, 0);
-        Vector3 right = new Vector3(+hexrad, 50, 0);
-        Vector3 botRightOffset = new Vector3(+hexrad / 2, 50, -hexrad/2 * Mathf.Sqrt(3));
-        Vector3 botLeftOffset = new Vector3(-hexrad / 2, 50, -hexrad/2 * Mathf.Sqrt(3));
+        Vector3 topLeftOffset = new Vector3(-r/2, 50, +r/2*Mathf.Sqrt(3));
+        Vector3 topRightOffset = new Vector3(+r / 2, 50, +r/2*Mathf.Sqrt(3));
+        Vector3 left = new Vector3(-r, 50, 0);
+        Vector3 right = new Vector3(+r, 50, 0);
+        Vector3 botRightOffset = new Vector3(+r / 2, 50, -r/2 * Mathf.Sqrt(3));
+        Vector3 botLeftOffset = new Vector3(-r / 2, 50, -r/2 * Mathf.Sqrt(3));
 
         Gizmos.color = Color.red;
 

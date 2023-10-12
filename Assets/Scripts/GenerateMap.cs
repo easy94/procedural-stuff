@@ -6,6 +6,7 @@ using Random = UnityEngine.Random;
 
 public class GenerateMap : MonoBehaviour
 {
+
     public AnimationCurve curve;
 
     [SerializeField] MeshCollider meshCollider;
@@ -27,9 +28,11 @@ public class GenerateMap : MonoBehaviour
     MapData mapData = new MapData();
     public Biomes[] Biomes;
 
-    private Vector3[] HEXARRAY;
+    private Dictionary<Vector3, Vector3[]> hexagonDictionary;
 
-    public float hexagonRadiuses;
+    [Range (6,50)]
+    [SerializeField] int HexGridX;
+    int HexGridY;
 
     static Dictionary<Vector3, bool> checkList;
 
@@ -50,8 +53,7 @@ public class GenerateMap : MonoBehaviour
         // PlaceAssets();
         mapData.ColorData =GenerateVertexColor.PaintVerts(mapData.MeshData, gradient);
         meshCollider.GetComponent<MeshFilter>().sharedMesh.colors = mapData.ColorData;
-        Debug.Log(mapData.MeshData.Length);
-        Debug.Log((float)(mapData.MeshData.Length - 1) * (mapData.MeshData.Length - 1)*6/2);
+
         MakeBiomes();
 
     }
@@ -63,15 +65,9 @@ public class GenerateMap : MonoBehaviour
         return noiseMap;
     }
 
-    private void OnDrawGizmos()
-    {
-        Gizmos.color = Color.yellow;
-
-    }
-
     public void MakeBiomes()
     {
-        HEXARRAY = GenerateBiomes.GenerateRndmBiomes(Biomes[0], mapData.MeshData, hexagonRadiuses);
+        hexagonDictionary = GenerateBiomes.GenerateRndmBiomes(Biomes[0], HexGridX, HexGridY, seed);
 
         //System.Random rand = new System.Random(seed);
         //int amountOfBiomes = rand.Next(15, 30);
@@ -174,8 +170,6 @@ public struct Biomes
     public AnimationCurve curve;
     public GameObject[] assets;
     public List<Vector3> vertexPos;
-
-
 }
 
 
