@@ -2,17 +2,17 @@
 using System.Collections;
 using UnityEngine;
 
-    public class PlaceAssets : MonoBehaviour
-    {
-        Action action;
-        private void Start()
-        {
-            action.Invoke();
-        }
+    //public class PlaceAssets : MonoBehaviour
+    //{
+    //    Action action;
+    //    private void Start()
+    //    {
+    //        action.Invoke();
+    //    }
 
-        public void FindRightSpot()
-        {
+    //    public void FindRightSpot()
+    //    {
 
-        }
+    //    }
         
-    }
+    //}

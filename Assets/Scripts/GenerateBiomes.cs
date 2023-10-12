@@ -6,50 +6,39 @@ using System.Linq;
 using UnityEngine;
 using UnityEditor.Rendering;
 using System.Threading;
+using UnityEditor;
 
 public static class GenerateBiomes
 {
-    public static Dictionary<Vector3, Vector3[]> GenerateRndmBiomes(Biomes biome, int gridX,int gridY, int seed)
+    public static Dictionary<Vector3, Vector3[]> GenerateRndmBiomes(Biomes biome, int gridX, int gridY, int seed)
     {
-        Hexagon hexagonGrid = new Hexagon(gridX,gridY);
+        Hexagon hexagonGrid = new Hexagon(gridX, gridY);
 
         //flat top hexagon grid positions. each hexagon has its own vector array with the first element being the center point
         List<Vector3[]> hexGridVectors;
         hexGridVectors = hexagonGrid.ConstructGrid(gridX);
 
+
         //name implies it all single vectors in one list
         hexagonGrid.SetAvailable(hexGridVectors);
 
+
         // get neighbours of each hexagon here example: first hexagon has 2 neigbours aka the central points of the adjacent hexas
-        List<Vector3[]> ListOfNeighbours = hexagonGrid.GetNeighboursPositions(hexGridVectors);
-        
+        List<Vector3[]> listOfNeighbours = hexagonGrid.GetNeighboursPositions(hexGridVectors);
+
+
         //hexgrid central points and its hexagon neigbours in one dictionary here
-        Dictionary<Vector3, Vector3[]> r_dict = new Dictionary<Vector3, Vector3[]>();
+        Dictionary<int, List<Vector3>> r_dict = new Dictionary<int, List<Vector3>>();
 
 
-        //init struct lists here
-        for (int i = 0; i < hexGridVectors.Count; ++i)
+        //init oozetypes here********************************************
+        OozeType[] oozeInstances = new OozeType[UnityEngine.Random.Range(0, 11)];
+
+        for (int i = 0; i < oozeInstances.Length; ++i)
         {
-            hexagonGrid.hexagonStruct.indexList.Add(hexGridVectors[i].First());
-        }
-        for (int i = 0; i < hexagonGrid.hexagonStruct.indexList.Count; i++)
-        {
-            foreach (Vector3[] e in ListOfNeighbours)
-            {
-                foreach (Vector3 item in e)
-                {
-                    hexagonGrid.hexagonStruct.neighbourlist.Add(item);
-                }
-            }
+            r_dict.Add(i, hexagonGrid.OozeProcess(oozeInstances[i]));
         }
 
-        //for (int i = 0; i < hexGridVectors.Count; ++i)
-        //{
-        //    r_dict.Add(hexGridVectors[i].First(), ListOfNeighbours[i]);
-        //}
-
-
-         //hexagonGrid.OozeProcess(seed);
 
         //danach alle positionen die geoozed worden sind nach dem rng move, speichern und in ein biom array packen damit items instantiatet werden können
 
@@ -87,21 +76,23 @@ class Hexagon
     public List<Vector3> oozedHexagons;
     List<Vector3> availablePositions = new List<Vector3>();
     int mapSize;
-   public MyStruct hexagonStruct;
+    public MyStruct hexagonStruct;
 
-    public Hexagon(int x,int y)
+    public Hexagon(int x, int y)
     {
         m_gridX = x; m_gridY = y;
 
         hexagonStruct = new MyStruct();
         hexagonStruct.indexList = new List<Vector3>();
-        hexagonStruct.neighbourlist = new List<Vector3>();
+        hexagonStruct.neighbourArr_list = new List<Vector3[]>();
         oozedHexagons = new List<Vector3>();
+        UnityEngine.Random.InitState((int)(EditorApplication.timeSinceStartup * 7546987 / Mathf.Sqrt(10)));
     }
 
     //construct grid
     public List<Vector3[]> ConstructGrid(int dimensionX)
     {
+
         //define general size of the single hexagon
         mapSize = GenerateMap.Mapwidth;
         int r = (int)(mapSize / m_gridX / 1.5f);
@@ -109,6 +100,9 @@ class Hexagon
         m_gridY = (int)(mapSize / (Mathf.Sqrt(3) * r));
         float m_hexagonHeight = Mathf.Sqrt(3) * r;
         float m_hexagonWidth = r * 2;
+
+        if (m_gridX % 2 != 0) m_gridX += 1;
+        if (m_gridY % 2 != 0) m_gridY -= 1;
 
 
         //define boundaries of the hexagons
@@ -130,12 +124,6 @@ class Hexagon
 
         List<Vector3[]> grid = new();
 
-        
-
-        if (m_gridX % 2 != 0) m_gridX += 1;
-        if (m_gridY % 2 != 0) m_gridY -= 1;
-
-
         for (int x = 0; x < m_gridX; ++x)
         {
 
@@ -143,7 +131,7 @@ class Hexagon
             {
                 //create array
                 Vector3[] temp = new Vector3[7];
-                System.Array.Fill(temp, new Vector3(m_hexagonWidth * .75f + (x*.75f*m_hexagonWidth), 0, m_hexagonHeight + (y*m_hexagonHeight)));
+                System.Array.Fill(temp, new Vector3(m_hexagonWidth * .75f + (x * .75f * m_hexagonWidth), 0, m_hexagonHeight + (y * m_hexagonHeight)));
 
                 //add offsets
                 for (int i = 0; i < offsets.Length; ++i)
@@ -155,18 +143,9 @@ class Hexagon
 
             }
         }
-
-        foreach (Vector3[] e in grid)
-        {
-            foreach (Vector3 item in e)
-            {
-                Debug.Log(item);
-            }
-        }
-
         return grid;
     }
-    
+
     public List<Vector3[]> GetNeighboursPositions(List<Vector3[]> target)
     {
 
@@ -301,40 +280,25 @@ class Hexagon
         return r_arr;
     }
     // this doestn work READ MORE RECURSIVE STUFF EVERYWHERE MAYBE ADD EVENT HERE SOMEWHERE?!??!?!!!
-    public List<Vector3> OozeProcess(int seed)
+    public List<Vector3> OozeProcess(OozeType ooze)
     {
-        System.Random rng = new System.Random(seed);
-        var shuffled = availablePositions.OrderBy(_ => rng.Next()).ToList();
-        availablePositions = shuffled;
-
-        //cant think of a better solution than this
-        List<Vector3> sample = new List<Vector3>();
-           sample.Add(availablePositions[rng.Next(0, m_gridX*m_gridY)]);
-
-        // how many bioms aka oozes
-        for (int i = 0; i < rng.Next(10, 20); i++)
-        {
-            CalculateChance(sample);
-        }
-
-        return oozedHexagons;
+        return CalculateChance(ooze, 9);
     }
 
     // WHAT IS THE STOP CONDITION
-    private List<Vector3> CalculateChance(List<Vector3> arg)
+    private List<Vector3> CalculateChance(OozeType arg, short chance)
     {
-        if(arg.Count ==0) return null;
-        for (int i = 0; i < arg.Count; ++i)
-        {
-            int chance = 0;
-            if (CoinFlip(chance)) //if success
+        UnityEngine.Random.InitState((short)(Time.timeAsDouble * Mathf.Sqrt(79) / Mathf.Sqrt(2)));
+        if (arg.Count == 0) return null;
+        else
+            for (short i = 0; i < arg.Count; ++i)
             {
-                ++chance;
-                oozedHexagons.Add(arg[i]);
-               return CalculateChance(hexagonStruct.GetTheNeighbours(arg,arg[i]));
-
+                if (UnityEngine.Random.Range(0, chance++) < chance - i) //if success
+                {
+                    oozedHexagons.Add(arg[i]);
+                    return CalculateChance(hexagonStruct.GetTheNeighbours(arg[i]), ++chance);
+                }
             }
-        }
         return null;
     }
 
@@ -350,45 +314,62 @@ class Hexagon
     //    return r_List;
     //}
 
-    private bool CoinFlip(int rng)
-    {
-        UnityEngine.Random.Range(rng, 5);
-        return UnityEngine.Random.Range(1, 10) < 10;
-    }
 
     public void SetAvailable(List<Vector3[]> x)
     {
-        foreach (var e in x)
-            foreach (var item in e)
-            {
-                availablePositions.Add(item);
-            }
+        for (int i = 0; i < x.Count; ++i)
+        {
+            availablePositions.Add(x[i].First());
+        }
     }
 
 }
 public struct MyStruct
 {
-        public List<Vector3> indexList;
-        public List<Vector3> neighbourlist;
+    //for every hexagon its own "mystruct object"
+    public List<Vector3> indexList;
+    public List<Vector3[]> neighbourArr_list;
 
+    //this method searches for the passed v3 in indexlist. since neighbourarr_list and indexlist elements allign with each other,
+    // after i found the index i can just use the same index to get the neighbours. after that remove the hex i came from aka dont calc this target ever again
+    // since its already oozed
 
-    public List<Vector3> GetTheNeighbours(List<Vector3> arg_list, Vector3 target)
+    public List<Vector3> GetTheNeighbours(Vector3 target)
     {
         List<Vector3> result = new List<Vector3>();
 
         for (int i = 0; i < indexList.Count; i++)
         {
-            if (indexList[i].Equals(target))
+            Vector3 x = indexList[i];
+            if (indexList[i]==(target))
             {
-                result.Add(neighbourlist[i]);
+                    foreach (Vector3 e in neighbourArr_list[i])
+                    {
+                        result.Add(e);
+                    }
+                break;
             }
-            
+
         }
+        //"result" is the list of neighbours
+        //error here solution: loop through every neighbour of the target dont just return it. remove the
+        //"target" in every neighbour. neighbour used as index in indexlist
+        //error: removing neighbours wont work cause i have no hexagon objects with corresponding neigbours
+        // solution: create hexagon class type to pass around as arrays instead of positions, and then 
+        // delete the neighbours from that instance object
+
+        for (int k=0;k<result.Count; ++k)//find the corresponding neighbours
+        {
+
+
+        }
+
         for (int i = 0; i < result.Count; i++)
         {
-            if (result[i].Equals(target))
+            if (result[i]==(target))
             {
                 result.RemoveAt(i);
+                break;
             }
         }
 
