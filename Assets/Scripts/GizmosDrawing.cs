@@ -1,15 +1,18 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
+using Unity.EditorCoroutines.Editor;
 using UnityEditor;
 using UnityEngine;
 
 public class GizmosDrawing : MonoBehaviour
 {
 
-    private void Start()
-    {
-        
-    }
+    Dictionary<int, List<Vector3>> reference = new Dictionary<int, List<Vector3>>();
+
+
 
     [ExecuteInEditMode]
     private void OnDrawGizmos()
@@ -43,22 +46,33 @@ public class GizmosDrawing : MonoBehaviour
         Vector3 botRightOffset = new Vector3(+r / 2, 50, -r/2 * Mathf.Sqrt(3));
         Vector3 botLeftOffset = new Vector3(-r / 2, 50, -r/2 * Mathf.Sqrt(3));
 
-        Gizmos.color = Color.red;
 
+        List<Vector3> list = new List<Vector3>();
+        for (int i = 0;i<reference.ElementAt(0).Value.Count;i++)
+        list.Add(reference.ElementAt(0).Value.ElementAt(i));
 
-        //drawline for convinience
-        for(int i = 0;i < hexaPositions.Length;i++)
+        StartCoroutine(Example(0, list));
+
+    }
+
+    IEnumerator Example(int index,List<Vector3> list)
+    {
+        while (index < list.Count)
         {
-            Gizmos.DrawLine((hexaPositions[i] + topLeftOffset), (hexaPositions[i] + topRightOffset));
-            Gizmos.DrawLine((hexaPositions[i] + topRightOffset), (hexaPositions[i] + right));
-            Gizmos.DrawLine((hexaPositions[i] + right), (hexaPositions[i] + botRightOffset));
-            Gizmos.DrawLine((hexaPositions[i] + botRightOffset), (hexaPositions[i] + botLeftOffset));
-            Gizmos.DrawLine((hexaPositions[i] + botLeftOffset), (hexaPositions[i] + left));
-            Gizmos.DrawLine((hexaPositions[i] + left), (hexaPositions[i] + topLeftOffset)); 
+            yield return new EditorWaitForSeconds(2f);
+
+                Gizmos.color = Color.green;
+                Gizmos.DrawCube(list[index], new(100, 1, 100));
+                ++index;
+            Debug.Log("iwashere");
+
         }
+    }
 
-        
 
+    public void GetReference(Dictionary<int, List<Vector3>> r_dict)
+    {
+        reference = r_dict;
 
     }
 }

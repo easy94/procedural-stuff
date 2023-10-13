@@ -15,20 +15,20 @@ public class OozeType : MonoBehaviour
 
     //constructor
 
-    public OozeType()
+    public OozeType(List<Vector3[]> ind, List<Vector3[]> neighbours)
     {
         oindex = new List<Vector3>();
         oozedPositions = new List<Vector3>();
         oozeNeighbour_list = new List<List<Vector3>>();
 
-        for (int i = 0; i < GenerateBiomes.hexGridVectors.Count; ++i)
+        for (int i = 0; i < ind.Count; ++i)
         {
-            oindex.Add(GenerateBiomes.hexGridVectors[i].First());
+            oindex.Add(ind[i].First());
         }
 
         for (int i = 0; i < oindex.Count; ++i)
         {
-            foreach (Vector3[] e in GenerateBiomes.listOfNeighbours)
+            foreach (Vector3[] e in neighbours)
             {
 
                 oozeNeighbour_list.Add(e.ToList());
@@ -45,10 +45,6 @@ public class OozeType : MonoBehaviour
         GetTheNeighbours(sample);
 
         this.CalculateChance(9, GetTheNeighbours(sample));
-        foreach (var item in oozedPositions)
-        {
-            Debug.Log(item);
-        }
 
         return this.oozedPositions;
     }
@@ -94,6 +90,11 @@ public class OozeType : MonoBehaviour
             if (item.Contains(v))
                 item.Remove(v);
         }
+    }
+
+    public void initializeOozeInstances()
+    {
+
     }
 
     //private int GetIndexOfVectorPos(Vector3 x)

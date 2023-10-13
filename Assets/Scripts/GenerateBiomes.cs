@@ -10,11 +10,12 @@ using UnityEditor;
 
 public static class GenerateBiomes
 {
-    public static List<Vector3[]> hexGridVectors;
-    public static List<Vector3[]> listOfNeighbours;
+
 
     public static Dictionary<int, List<Vector3>> GenerateRndmBiomes(Biomes biome, int gridX, int gridY, int seed)
     {
+        List<Vector3[]> hexGridVectors;
+        List<Vector3[]> listOfNeighbours;
         Hexagon hexagonGrid = new(gridX, gridY);
 
         //flat top hexagon grid positions. each hexagon has its own vector array with the first element being the center point
@@ -33,15 +34,18 @@ public static class GenerateBiomes
         //init oozetypes here********************************************
         int r = UnityEngine.Random.Range(5, 6);
 
-        OozeType oozeInstances = new();
+        OozeType[] oozeInstances = new OozeType[r];
 
-        //for (int i = 0; i < oozeInstances.Length; ++i)
-        //{
-            r_dict.Add(1, oozeInstances.OozeProcess());
-        //}
+        for (int i = 0; i < r; i++)
+        {
+            oozeInstances[i] = new OozeType(hexGridVectors,listOfNeighbours);
+            r_dict.Add(i, oozeInstances[i].OozeProcess());
+
+        }
 
         return r_dict;
     }
+
 }
 class Hexagon
 {

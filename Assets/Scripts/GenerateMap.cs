@@ -7,6 +7,8 @@ using Random = UnityEngine.Random;
 public class GenerateMap : MonoBehaviour
 {
 
+
+
     public AnimationCurve curve;
 
     [SerializeField] MeshCollider meshCollider;

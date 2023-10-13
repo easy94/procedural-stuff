@@ -281,7 +281,7 @@ MonoBehaviour:
   octaves: 4
   freq: 2.7
   amp: 0.48
-  seed: 601
+  seed: 1155
   heightmultiplier: 35
   gradient:
     serializedVersion: 2
@@ -671,7 +671,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!64 &1992031058
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -771,6 +771,7 @@ GameObject:
   - component: {fileID: 2133788172}
   - component: {fileID: 2133788171}
   - component: {fileID: 2133788170}
+  - component: {fileID: 2133788174}
   m_Layer: 0
   m_Name: Cube
   m_TagString: Untagged
@@ -864,6 +865,18 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2133788174
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2133788169}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5eb01597d0580864fa660cad4df82d76, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
