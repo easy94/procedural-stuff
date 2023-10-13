@@ -9,117 +9,104 @@ using UnityEditor;
 
 public class OozeType : MonoBehaviour
 {
-
-    //for every hexagon its own "mystruct object"
-    public List<Vector3> ooze_index = new List<Vector3>();
-    public List<Vector3[]> oozeNeighbour_list = new List<Vector3[]>();
-    public List<Vector3> oozedPositions = new List<Vector3>();
-    public Vector3 sample;
+    private List<Vector3> oindex = new();
+    private List<List<Vector3>> oozeNeighbour_list = new();
+    private List<Vector3> oozedPositions = new();
 
     //constructor
 
     public OozeType(List<Vector3[]> ind, List<Vector3[]> neigh)
     {
-        
+
         for (int i = 0; i < ind.Count; ++i)
         {
-            ooze_index.Add(ind[i].First());
+            oindex.Add(ind[i].First());
         }
 
-        for (int i = 0; i < ooze_index.Count; i++)
+        for (int i = 0; i < oindex.Count; i++)
         {
             foreach (Vector3[] e in neigh)
             {
 
-                oozeNeighbour_list.Add(e);
+                oozeNeighbour_list.Add(e.ToList());
 
             }
         }
-       sample = ooze_index[UnityEngine.Random.Range(0, ooze_index.Count-1)];
     }
-
+    // compare oozed positions before adding to it?!
+    // remove all neighbour refereces?! need to think
+    //
 
     public List<Vector3> OozeProcess()
     {
         UnityEngine.Random.InitState((short)(EditorApplication.timeSinceStartup * 7546987 / Mathf.Sqrt(10)));
 
-        Vector3 sample = this.ooze_index[UnityEngine.Random.Range(0, this.ooze_index.Count - 1)];
+        Vector3 sample = this.oindex[UnityEngine.Random.Range(0, this.oindex.Count - 1)];
+        GetTheNeighbours(sample);
 
-       this.CalculateChance(9);
+        this.CalculateChance(9, GetTheNeighbours(sample));
 
         return this.oozedPositions;
     }
 
-    public List<Vector3> CalculateChance(short chance)
-    { 
+    private void CalculateChance(short chance, List<Vector3> arg)
+    {
 
         UnityEngine.Random.InitState((short)(Time.timeAsDouble * Mathf.Sqrt(79) / Mathf.Sqrt(2)));
 
-        for (int i = 0; i < this.ooze_index.Count; i++)
+
+        for (int i = 0; i < arg.Count; i++)
         {
             if (UnityEngine.Random.Range(0, chance++) < chance - i) //if success
-
-                oozedPositions.Add(this.ooze_index[i]);
-            return CalculateChance(GetTheNeighbours(this.ooze_index[i]), ++chance);
+            {
+                oozedPositions.Add(arg[i]);//add the position to the return list
+                RemoveitFromPossibleOutcomes(arg[i]);// delete the position from possibly being inside a neighbour list of some friends
+                CalculateChance(++chance, GetTheNeighbours(arg[i]));
+            }
         }
-
-        
-
-        return null;
+        return;
     }
 
-    public List<Vector3> GetTheNeighbours(Vector3 target)
+
+    private List<Vector3> GetTheNeighbours(Vector3 target)
     {
-        List<Vector3> result = new List<Vector3>();
+        List<Vector3> result = new();
 
-        for (int i = 0; i < indexList.Count; i++)
+        for (int i = 0; i < this.oindex.Count; i++)
         {
-            Vector3 x = indexList[i];
-            if (indexList[i] == (target))
+            if (this.oindex[i] == (target))
             {
-                foreach (Vector3 e in neighbourArr_list[i])
-                {
-                    result.Add(e);
-                }
-                break;
-            }
-
-        }
-        //"result" is the list of neighbours
-        //error here solution: loop through every neighbour of the target dont just return it. remove the
-        //"target" in every neighbour. neighbour used as index in indexlist
-        //error: removing neighbours wont work cause i have no hexagon objects with corresponding neigbours
-        // solution: create hexagon class type to pass around as arrays instead of positions, and then 
-        // delete the neighbours from that instance object
-
-        for (int k = 0; k < result.Count; ++k)//find the corresponding neighbours
-        {
-
-
-        }
-
-        for (int i = 0; i < result.Count; i++)
-        {
-            if (result[i] == (target))
-            {
-                result.RemoveAt(i);
+                result = this.oozeNeighbour_list[i];
                 break;
             }
         }
-
         return result;
     }
 
-    //add methods to remove neighbours and copy some shit from the struct***********************************
+    private void RemoveitFromPossibleOutcomes(Vector3 v)
+    {
+        foreach (var item in oozeNeighbour_list)
+        {
+            if(item.Contains(v))
+            item.Remove(v);
+        }
+    }
+
+    //private int GetIndexOfVectorPos(Vector3 x)
+    //{
+    //    for (int i = 0; i < this.oindex.Count; ++i)
+    //    {
+    //        if (this.oindex[i] == x)
+    //        {
+    //            return i;
+    //        }
+    //    }
+    //    return -1; // if this returns vector wasnt found
+    //}
+
 
     //this method searches for the passed v3 in indexlist. since neighbourarr_list and indexlist elements allign with each other,
     // after i found the index i can just use the same index to get the neighbours. after that remove the hex i came from aka dont calc this target ever again
     // since its already oozed
-
-    //public List<Vector3> GetTheNeighbours(Vector3 target)
-    //{
-
-
-    //}
 
 }

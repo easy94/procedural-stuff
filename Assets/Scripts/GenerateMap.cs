@@ -67,7 +67,8 @@ public class GenerateMap : MonoBehaviour
 
     public void MakeBiomes()
     {
-        hexagonDictionary = GenerateBiomes.GenerateRndmBiomes(Biomes[0], HexGridX, HexGridY, seed);
+        Dictionary<int, List<Vector3>> y = new();
+        y = GenerateBiomes.GenerateRndmBiomes(Biomes[0], HexGridX, HexGridY, seed);
 
         //System.Random rand = new System.Random(seed);
         //int amountOfBiomes = rand.Next(15, 30);

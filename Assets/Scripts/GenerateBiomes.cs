@@ -12,7 +12,7 @@ public static class GenerateBiomes
 {
     public static Dictionary<int, List<Vector3>> GenerateRndmBiomes(Biomes biome, int gridX, int gridY, int seed)
     {
-        Hexagon hexagonGrid = new Hexagon(gridX, gridY);
+        Hexagon hexagonGrid = new(gridX, gridY);
 
         //flat top hexagon grid positions. each hexagon has its own vector array with the first element being the center point
         List<Vector3[]> hexGridVectors;
@@ -24,7 +24,7 @@ public static class GenerateBiomes
 
 
         //hexgrid central points and its hexagon neigbours in one dictionary here
-        Dictionary<int, List<Vector3>> r_dict = new Dictionary<int, List<Vector3>>();
+        Dictionary<int, List<Vector3>> r_dict = new();
 
 
         //init oozetypes here********************************************
@@ -43,7 +43,6 @@ class Hexagon
     int m_gridX;
     int m_gridY;
     public List<Vector3> oozedHexagons;
-    List<Vector3> availablePositions = new List<Vector3>();
     int mapSize;
 
 
@@ -243,7 +242,6 @@ class Hexagon
 
         return r_arr;
     }
-
 
 
 
