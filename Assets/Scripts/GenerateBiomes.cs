@@ -10,11 +10,8 @@ using UnityEditor;
 
 public static class GenerateBiomes
 {
-<<<<<<< HEAD
 
 
-=======
->>>>>>> parent of ead74fa (nomoreerrors but yet to be tested)
     public static Dictionary<int, List<Vector3>> GenerateRndmBiomes(Biomes biome, int gridX, int gridY, int seed)
     {
         List<Vector3[]> hexGridVectors;
@@ -22,12 +19,12 @@ public static class GenerateBiomes
         Hexagon hexagonGrid = new(gridX, gridY);
 
         //flat top hexagon grid positions. each hexagon has its own vector array with the first element being the center point
-        List<Vector3[]> hexGridVectors;
+
         hexGridVectors = hexagonGrid.ConstructGrid(gridX);
 
 
         // get neighbours of each hexagon here example: first hexagon has 2 neigbours aka the central points of the adjacent hexas
-        List<Vector3[]> listOfNeighbours = hexagonGrid.GetNeighboursPositions(hexGridVectors);
+        listOfNeighbours = hexagonGrid.GetNeighboursPositions(hexGridVectors);
 
 
         //hexgrid central points and its hexagon neigbours in one dictionary here
@@ -35,21 +32,15 @@ public static class GenerateBiomes
 
 
         //init oozetypes here********************************************
-        OozeType[] oozeInstances = new OozeType[UnityEngine.Random.Range(0, 11)];
+        int r = UnityEngine.Random.Range(5, 6);
 
-<<<<<<< HEAD
         OozeType[] oozeInstances = new OozeType[r];
 
         for (int i = 0; i < r; i++)
         {
-            oozeInstances[i] = new OozeType(hexGridVectors,listOfNeighbours);
+            oozeInstances[i] = new OozeType(hexGridVectors, listOfNeighbours);
             r_dict.Add(i, oozeInstances[i].OozeProcess());
 
-=======
-        for (int i = 0; i < oozeInstances.Length; ++i)
-        {
-            r_dict.Add(i, oozeInstances[i].OozeProcess());
->>>>>>> parent of ead74fa (nomoreerrors but yet to be tested)
         }
 
         return r_dict;
@@ -276,4 +267,4 @@ class Hexagon
 }
 
 //erstes vertex array posi muss kleiner sein als verticesForBiome array size also: range[0,169sqrrt-rndmsize] angenommen 169vertexsizearray
-// ausgewählte range dann auf y achse verschieben per multiplier(*169sqrrt) range[0,(169-rndmsizesqred/169sqrt)-1]
+// ausgew?hlte range dann auf y achse verschieben per multiplier(*169sqrrt) range[0,(169-rndmsizesqred/169sqrt)-1]
