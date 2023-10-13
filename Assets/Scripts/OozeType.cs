@@ -9,26 +9,31 @@ using UnityEditor;
 
 public class OozeType : MonoBehaviour
 {
-    private List<Vector3> oindex;
-    private List<List<Vector3>> oozeNeighbour_list;
-    private List<Vector3> oozedPositions;
+    private List<Vector3> oindex = new();
+    private List<List<Vector3>> oozeNeighbour_list = new();
+    private List<Vector3> oozedPositions = new();
 
     //constructor
 
+<<<<<<< HEAD
     public OozeType(List<Vector3[]> ind, List<Vector3[]> neighbours)
+=======
+    public OozeType(List<Vector3[]> ind, List<Vector3[]> neigh)
+>>>>>>> parent of ead74fa (nomoreerrors but yet to be tested)
     {
-        oindex = new List<Vector3>();
-        oozedPositions = new List<Vector3>();
-        oozeNeighbour_list = new List<List<Vector3>>();
 
         for (int i = 0; i < ind.Count; ++i)
         {
             oindex.Add(ind[i].First());
         }
 
-        for (int i = 0; i < oindex.Count; ++i)
+        for (int i = 0; i < oindex.Count; i++)
         {
+<<<<<<< HEAD
             foreach (Vector3[] e in neighbours)
+=======
+            foreach (Vector3[] e in neigh)
+>>>>>>> parent of ead74fa (nomoreerrors but yet to be tested)
             {
 
                 oozeNeighbour_list.Add(e.ToList());
@@ -36,10 +41,13 @@ public class OozeType : MonoBehaviour
             }
         }
     }
+    // compare oozed positions before adding to it?!
+    // remove all neighbour refereces?! need to think
+    //
 
     public List<Vector3> OozeProcess()
     {
-        UnityEngine.Random.InitState((int)(EditorApplication.timeSinceStartup * 7546987 / Mathf.Sqrt(10)));
+        UnityEngine.Random.InitState((short)(EditorApplication.timeSinceStartup * 7546987 / Mathf.Sqrt(10)));
 
         Vector3 sample = this.oindex[UnityEngine.Random.Range(0, this.oindex.Count - 1)];
         GetTheNeighbours(sample);
@@ -49,17 +57,19 @@ public class OozeType : MonoBehaviour
         return this.oozedPositions;
     }
 
-    private void CalculateChance(int chance, List<Vector3> arg)
+    private void CalculateChance(short chance, List<Vector3> arg)
     {
-        UnityEngine.Random.InitState((int)(EditorApplication.timeSinceStartup * 7546 / Mathf.Sqrt(2)));
 
-        if (arg.Count <= 0) return;
-        for (int i = 0; i < arg.Count; ++i)
+        UnityEngine.Random.InitState((short)(Time.timeAsDouble * Mathf.Sqrt(79) / Mathf.Sqrt(2)));
+
+
+        for (int i = 0; i < arg.Count; i++)
         {
-            if (UnityEngine.Random.Range(0, chance) < 7 - i) //if success
+            if (UnityEngine.Random.Range(0, chance++) < chance - i) //if success
             {
                 oozedPositions.Add(arg[i]);//add the position to the return list
-                CalculateChance(chance+=2, GetTheNeighbours(arg[i]));
+                RemoveitFromPossibleOutcomes(arg[i]);// delete the position from possibly being inside a neighbour list of some friends
+                CalculateChance(++chance, GetTheNeighbours(arg[i]));
             }
         }
         return;
@@ -68,10 +78,9 @@ public class OozeType : MonoBehaviour
 
     private List<Vector3> GetTheNeighbours(Vector3 target)
     {
-        RemoveitFromPossibleOutcomes(target);// delete the position from possibly being inside a neighbour list of some friends
         List<Vector3> result = new();
 
-        for (int i = 0; i < this.oindex.Count; ++i)
+        for (int i = 0; i < this.oindex.Count; i++)
         {
             if (this.oindex[i] == (target))
             {
@@ -79,7 +88,6 @@ public class OozeType : MonoBehaviour
                 break;
             }
         }
-
         return result;
     }
 
@@ -87,8 +95,8 @@ public class OozeType : MonoBehaviour
     {
         foreach (var item in oozeNeighbour_list)
         {
-            if (item.Contains(v))
-                item.Remove(v);
+            if(item.Contains(v))
+            item.Remove(v);
         }
     }
 
@@ -106,7 +114,12 @@ public class OozeType : MonoBehaviour
     //            return i;
     //        }
     //    }
-    //    return -1; // if this returns, vector wasnt found
+    //    return -1; // if this returns vector wasnt found
     //}
+
+
+    //this method searches for the passed v3 in indexlist. since neighbourarr_list and indexlist elements allign with each other,
+    // after i found the index i can just use the same index to get the neighbours. after that remove the hex i came from aka dont calc this target ever again
+    // since its already oozed
 
 }

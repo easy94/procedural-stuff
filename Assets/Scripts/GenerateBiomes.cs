@@ -10,8 +10,11 @@ using UnityEditor;
 
 public static class GenerateBiomes
 {
+<<<<<<< HEAD
 
 
+=======
+>>>>>>> parent of ead74fa (nomoreerrors but yet to be tested)
     public static Dictionary<int, List<Vector3>> GenerateRndmBiomes(Biomes biome, int gridX, int gridY, int seed)
     {
         List<Vector3[]> hexGridVectors;
@@ -19,12 +22,12 @@ public static class GenerateBiomes
         Hexagon hexagonGrid = new(gridX, gridY);
 
         //flat top hexagon grid positions. each hexagon has its own vector array with the first element being the center point
-
+        List<Vector3[]> hexGridVectors;
         hexGridVectors = hexagonGrid.ConstructGrid(gridX);
 
 
         // get neighbours of each hexagon here example: first hexagon has 2 neigbours aka the central points of the adjacent hexas
-        listOfNeighbours = hexagonGrid.GetNeighboursPositions(hexGridVectors);
+        List<Vector3[]> listOfNeighbours = hexagonGrid.GetNeighboursPositions(hexGridVectors);
 
 
         //hexgrid central points and its hexagon neigbours in one dictionary here
@@ -32,8 +35,9 @@ public static class GenerateBiomes
 
 
         //init oozetypes here********************************************
-        int r = UnityEngine.Random.Range(5, 6);
+        OozeType[] oozeInstances = new OozeType[UnityEngine.Random.Range(0, 11)];
 
+<<<<<<< HEAD
         OozeType[] oozeInstances = new OozeType[r];
 
         for (int i = 0; i < r; i++)
@@ -41,6 +45,11 @@ public static class GenerateBiomes
             oozeInstances[i] = new OozeType(hexGridVectors,listOfNeighbours);
             r_dict.Add(i, oozeInstances[i].OozeProcess());
 
+=======
+        for (int i = 0; i < oozeInstances.Length; ++i)
+        {
+            r_dict.Add(i, oozeInstances[i].OozeProcess());
+>>>>>>> parent of ead74fa (nomoreerrors but yet to be tested)
         }
 
         return r_dict;
