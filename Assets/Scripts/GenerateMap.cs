@@ -56,8 +56,6 @@ public class GenerateMap : MonoBehaviour
         mapData.ColorData =GenerateVertexColor.PaintVerts(mapData.MeshData, gradient);
         meshCollider.GetComponent<MeshFilter>().sharedMesh.colors = mapData.ColorData;
 
-        MakeBiomes();
-
     }
 
     public float[,] GenerateNoiseMap()
@@ -71,8 +69,9 @@ public class GenerateMap : MonoBehaviour
     {
         Dictionary<int, List<Vector3>> y = new();
         y = GenerateBiomes.GenerateRndmBiomes(Biomes[0], HexGridX, HexGridY, seed);
-        GameObject.Find("Player").GetComponent<GizmosDrawing>().GetReference(y);
+        
 
+        GameObject.Find("Player").GetComponent<GizmosDrawing>().GetReference(y);
         //System.Random rand = new System.Random(seed);
         //int amountOfBiomes = rand.Next(15, 30);
         //int rndmIndex;

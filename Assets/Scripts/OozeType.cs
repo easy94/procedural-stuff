@@ -36,13 +36,16 @@ public class OozeType
         }
     }
 
-    public List<Vector3> OozeProcess()
+    public List<Vector3> OozeProcess(int seed)
     {
-        UnityEngine.Random.InitState((int)(EditorApplication.timeSinceStartup * 7546987 / Mathf.Sqrt(10)));
+        System.Random rand = new System.Random(Guid.NewGuid().GetHashCode());
 
-        Vector3 sample = this.oindex[UnityEngine.Random.Range(0, this.oindex.Count - 1)];
+        List<Vector3> list = new List<Vector3>();
+        var shuffledList = this.oindex.OrderBy(_ => Guid.NewGuid()).ToList();
+
+        Vector3 sample = shuffledList[rand.Next(0, this.oindex.Count)];
         GetTheNeighbours(sample);
-
+        
         this.CalculateChance(9, GetTheNeighbours(sample));
 
         return this.oozedPositions;
@@ -50,12 +53,12 @@ public class OozeType
 
     private void CalculateChance(int chance, List<Vector3> arg)
     {
-        UnityEngine.Random.InitState((int)(EditorApplication.timeSinceStartup * 7546 / Mathf.Sqrt(2)));
+        System.Random random = new System.Random(Guid.NewGuid().GetHashCode());
 
         if (arg.Count <= 0) return;
         for (int i = 0; i < arg.Count; ++i)
         {
-            if (UnityEngine.Random.Range(0, chance) < 7 - i) //if success
+            if (random.Next(0, chance) < 7 - i) //if success
             {
                 oozedPositions.Add(arg[i]);//add the position to the return list
                 CalculateChance(chance += 2, GetTheNeighbours(arg[i]));

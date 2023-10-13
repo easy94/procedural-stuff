@@ -19,9 +19,9 @@ public class GizmosDrawing : MonoBehaviour
     private void OnDrawGizmos()
     {
 
-    float r = 1920/100*6;
-    float heightDist = r * Mathf.Sqrt(3);
-    float widthDist = 1.5f * r;
+        float r = 1920 / 100 * 6;
+        float heightDist = r * Mathf.Sqrt(3);
+        float widthDist = 1.5f * r;
         Vector3[] hexaPositions = new Vector3[120];
         //flat top
         int k = 0;
@@ -29,37 +29,50 @@ public class GizmosDrawing : MonoBehaviour
         {
             for (int y = 0; y < 10; ++y)
             {
-                if(x%2==0 || x == 0)
-                hexaPositions[k] = new((widthDist * x)+r/2/2, 0, (heightDist * y)-(heightDist/2)+(0.75f*heightDist));
+                if (x % 2 == 0 || x == 0)
+                    hexaPositions[k] = new((widthDist * x) + r / 2 / 2, 0, (heightDist * y) - (heightDist / 2) + (0.75f * heightDist));
                 else
-                    hexaPositions[k] = new(widthDist * x+r/2/2, 0, (heightDist * y)+0.75f*heightDist);
+                    hexaPositions[k] = new(widthDist * x + r / 2 / 2, 0, (heightDist * y) + 0.75f * heightDist);
                 ++k;
             }
         }
 
-        Dictionary <Vector3,int> hexagonNeighbors = new Dictionary <Vector3,int>();
+        Dictionary<Vector3, int> hexagonNeighbors = new Dictionary<Vector3, int>();
 
 
 
 
 
-        List<Vector3> list = new List<Vector3>();
+        List<Vector3[]> list = new List<Vector3[]>();
 
 
-            for (int i = 0; i < reference.ElementAt(0).Value.Count; i++)
-                list.Add(reference.ElementAt(0).Value.ElementAt(i));
-
-
-        if(list.Count > 0) { 
-        int index = 0;
-        while (index < list.Count)
+        foreach (List<Vector3> item in reference.Values)
         {
-            Gizmos.color = Color.cyan;
-            Gizmos.DrawCube(list[index], new(100, 1, 100));
-            ++index;
+            list.Add(item.ToArray());
+        }
 
+        int j = 0;
+
+
+        Gizmos.color = Color.magenta;
+        foreach (Vector3[] item in list)
+        {
+            foreach (Vector3 vector in item)
+            {
+                Gizmos.DrawCube(vector, new(100, 1, 100));
+            }
+
+            if (j == 0) Gizmos.color = Color.red;
+            if (j == 1) Gizmos.color = Color.green;
+            if (j == 2)
+            {
+                Gizmos.color = Color.blue;
+                j = 0;
+            }
+
+            j++;
         }
-        }
+
     }
 
     public void GetReference(Dictionary<int, List<Vector3>> r_dict)

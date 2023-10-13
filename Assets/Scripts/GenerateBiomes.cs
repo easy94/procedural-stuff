@@ -33,19 +33,16 @@ public static class GenerateBiomes
 
 
         //init oozetypes here********************************************
-        int r = UnityEngine.Random.Range(5, 6);
+        int r = 12;
 
         OozeType[] oozeInstances = new OozeType[r];
-        Debug.Log("wtf");
+        
         for (int i = 0; i < r; i++)
         {
-            Debug.Log("is going on");
             oozeInstances[i] = new OozeType(hexGridVectors, listOfNeighbours);
-            r_dict.Add(i, oozeInstances[i].OozeProcess());
+            r_dict.Add(i, oozeInstances[i].OozeProcess(seed));
 
         }
-
-        Debug.Log(r_dict.Count);
 
         return r_dict;
     }
@@ -85,15 +82,23 @@ class Hexagon
         // center first then topleft clockwise all 6outer points +1center
         //allign with terrain + (terrainOffsets)
 
-
         Vector3[] offsets = {
-            new Vector3(0+(m_hexagonWidth * .75f / 2),0,0+(m_hexagonHeight/2)),
-            new Vector3(-r / 2+(m_hexagonWidth * .75f / 2), 50, +r / 2 * Mathf.Sqrt(3)+(m_hexagonHeight/2)) ,
-            new Vector3(+r / 2+(m_hexagonWidth * .75f / 2), 50, +r / 2 * Mathf.Sqrt(3)+(m_hexagonHeight/2)),
-            new Vector3(+r+(m_hexagonWidth * .75f / 2), 50, 0+(m_hexagonHeight/2)),
-            new Vector3(+r / 2+(m_hexagonWidth * .75f / 2), 50, -r / 2 * Mathf.Sqrt(3)+(m_hexagonHeight/2)),
-            new Vector3(-r / 2+(m_hexagonWidth * .75f / 2), 50, -r / 2 * Mathf.Sqrt(3)+(m_hexagonHeight/2)),
-            new Vector3(-r+(m_hexagonWidth * .75f / 2), 50, 0+(m_hexagonHeight/2)) };
+            new Vector3(0-(m_hexagonWidth * .75f / 2),0,0+(m_hexagonHeight/2)),
+            new Vector3(-r / 2-(m_hexagonWidth * .75f / 2), 50, +r / 2 * Mathf.Sqrt(3)+(m_hexagonHeight/2)) ,
+            new Vector3(+r / 2-(m_hexagonWidth * .75f / 2), 50, +r / 2 * Mathf.Sqrt(3)+(m_hexagonHeight/2)),
+            new Vector3(+r-(m_hexagonWidth * .75f / 2), 50, 0+(m_hexagonHeight/2)),
+            new Vector3(+r / 2-(m_hexagonWidth * .75f / 2), 50, -r / 2 * Mathf.Sqrt(3)+(m_hexagonHeight/2)),
+            new Vector3(-r / 2-(m_hexagonWidth * .75f / 2), 50, -r / 2 * Mathf.Sqrt(3)+(m_hexagonHeight/2)),
+            new Vector3(-r-(m_hexagonWidth * .75f / 2), 50, 0+(m_hexagonHeight/2)) };
+
+        //Vector3[] offsets = {
+        //    new Vector3(0,0,0),
+        //    new Vector3(-r / 2, 50, +r / 2 * Mathf.Sqrt(3)) ,
+        //    new Vector3(+r / 2, 50, +r / 2 * Mathf.Sqrt(3)),
+        //    new Vector3(+r, 50, 0),
+        //    new Vector3(+r / 2, 50, -r / 2 * Mathf.Sqrt(3)),
+        //    new Vector3(-r / 2, 50, -r / 2 * Mathf.Sqrt(3)),
+        //    new Vector3(-r, 50, 0) };
 
         //grid loop defining the grid inside a list: index1 is all hex points for topleft indexlast is bottom right hex points
         //top left to bot left* sorted
