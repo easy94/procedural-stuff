@@ -10,17 +10,13 @@ using UnityEditor;
 
 public static class GenerateBiomes
 {
-    public static Dictionary<Vector3, Vector3[]> GenerateRndmBiomes(Biomes biome, int gridX, int gridY, int seed)
+    public static Dictionary<int, List<Vector3>> GenerateRndmBiomes(Biomes biome, int gridX, int gridY, int seed)
     {
         Hexagon hexagonGrid = new Hexagon(gridX, gridY);
 
         //flat top hexagon grid positions. each hexagon has its own vector array with the first element being the center point
         List<Vector3[]> hexGridVectors;
         hexGridVectors = hexagonGrid.ConstructGrid(gridX);
-
-
-        //name implies it all single vectors in one list
-        hexagonGrid.SetAvailable(hexGridVectors);
 
 
         // get neighbours of each hexagon here example: first hexagon has 2 neigbours aka the central points of the adjacent hexas
@@ -36,35 +32,8 @@ public static class GenerateBiomes
 
         for (int i = 0; i < oozeInstances.Length; ++i)
         {
-            r_dict.Add(i, hexagonGrid.OozeProcess(oozeInstances[i]));
+            r_dict.Add(i, oozeInstances[i].OozeProcess());
         }
-
-
-        //danach alle positionen die geoozed worden sind nach dem rng move, speichern und in ein biom array packen damit items instantiatet werden können
-
-
-        //Vector3 topLeftOffset = new Vector3(-hexaRadius, 50, +hexaRadius);
-        //Vector3 topRightOffset = new Vector3(+hexaRadius, 50, +hexaRadius);
-        //Vector3 left = new Vector3(-hexaRadius, 50, 0);
-        //Vector3 right = new Vector3(+hexaRadius, 50, 0);
-        //Vector3 botRightOffset = new Vector3(+hexaRadius, 50, -hexaRadius);
-        //Vector3 botLeftOffset = new Vector3(-hexaRadius, 50, -hexaRadius);
-
-
-        ////drawline for convinience
-
-        //for (int i = 0; i < hexaPositions.Length; i++)
-        //{
-        //    Handles.DrawLine((hexaPositions[i] + topLeftOffset), (hexaPositions[i] + topRightOffset));
-        //    Handles.DrawLine((hexaPositions[i] + topRightOffset), (hexaPositions[i] + right));
-        //    Handles.DrawLine((hexaPositions[i] + right), (hexaPositions[i] + botRightOffset));
-        //    Handles.DrawLine((hexaPositions[i] + botRightOffset), (hexaPositions[i] + botLeftOffset));
-        //    Handles.DrawLine((hexaPositions[i] + botLeftOffset), (hexaPositions[i] + left));
-        //    Handles.DrawLine((hexaPositions[i] + left), (hexaPositions[i] + topLeftOffset));
-        //    Debug.Log("why");
-        //}
-
-
 
         return r_dict;
     }
@@ -76,17 +45,12 @@ class Hexagon
     public List<Vector3> oozedHexagons;
     List<Vector3> availablePositions = new List<Vector3>();
     int mapSize;
-    public MyStruct hexagonStruct;
+
 
     public Hexagon(int x, int y)
     {
         m_gridX = x; m_gridY = y;
-
-        hexagonStruct = new MyStruct();
-        hexagonStruct.indexList = new List<Vector3>();
-        hexagonStruct.neighbourArr_list = new List<Vector3[]>();
         oozedHexagons = new List<Vector3>();
-        UnityEngine.Random.InitState((int)(EditorApplication.timeSinceStartup * 7546987 / Mathf.Sqrt(10)));
     }
 
     //construct grid
@@ -279,102 +243,19 @@ class Hexagon
 
         return r_arr;
     }
-    // this doestn work READ MORE RECURSIVE STUFF EVERYWHERE MAYBE ADD EVENT HERE SOMEWHERE?!??!?!!!
-    public List<Vector3> OozeProcess(OozeType ooze)
-    {
-        return CalculateChance(ooze, 9);
-    }
 
-    // WHAT IS THE STOP CONDITION
-    private List<Vector3> CalculateChance(OozeType arg, short chance)
-    {
-        UnityEngine.Random.InitState((short)(Time.timeAsDouble * Mathf.Sqrt(79) / Mathf.Sqrt(2)));
-        if (arg.Count == 0) return null;
-        else
-            for (short i = 0; i < arg.Count; ++i)
-            {
-                if (UnityEngine.Random.Range(0, chance++) < chance - i) //if success
-                {
-                    oozedHexagons.Add(arg[i]);
-                    return CalculateChance(hexagonStruct.GetTheNeighbours(arg[i]), ++chance);
-                }
-            }
-        return null;
-    }
 
-    //private List<Vector3> GetNeigbours(Vector3 arg)
+
+
+
+
+    //public void SetAvailable(List<Vector3[]> x)
     //{
-
-    //    //remove the Vector from the neighbours list because backtrack issue
-    //    hexagonStruct.GetTheNeighbours()
-
-    //    //return the list of neighbours
-    //    neighbourList.TryGetValue(arg, out List<Vector3> r_List);
-
-    //    return r_List;
+    //    for (int i = 0; i < x.Count; ++i)
+    //    {
+    //        availablePositions.Add(x[i].First());
+    //    }
     //}
-
-
-    public void SetAvailable(List<Vector3[]> x)
-    {
-        for (int i = 0; i < x.Count; ++i)
-        {
-            availablePositions.Add(x[i].First());
-        }
-    }
-
-}
-public struct MyStruct
-{
-    //for every hexagon its own "mystruct object"
-    public List<Vector3> indexList;
-    public List<Vector3[]> neighbourArr_list;
-
-    //this method searches for the passed v3 in indexlist. since neighbourarr_list and indexlist elements allign with each other,
-    // after i found the index i can just use the same index to get the neighbours. after that remove the hex i came from aka dont calc this target ever again
-    // since its already oozed
-
-    public List<Vector3> GetTheNeighbours(Vector3 target)
-    {
-        List<Vector3> result = new List<Vector3>();
-
-        for (int i = 0; i < indexList.Count; i++)
-        {
-            Vector3 x = indexList[i];
-            if (indexList[i]==(target))
-            {
-                    foreach (Vector3 e in neighbourArr_list[i])
-                    {
-                        result.Add(e);
-                    }
-                break;
-            }
-
-        }
-        //"result" is the list of neighbours
-        //error here solution: loop through every neighbour of the target dont just return it. remove the
-        //"target" in every neighbour. neighbour used as index in indexlist
-        //error: removing neighbours wont work cause i have no hexagon objects with corresponding neigbours
-        // solution: create hexagon class type to pass around as arrays instead of positions, and then 
-        // delete the neighbours from that instance object
-
-        for (int k=0;k<result.Count; ++k)//find the corresponding neighbours
-        {
-
-
-        }
-
-        for (int i = 0; i < result.Count; i++)
-        {
-            if (result[i]==(target))
-            {
-                result.RemoveAt(i);
-                break;
-            }
-        }
-
-        return result;
-    }
 
 }
 

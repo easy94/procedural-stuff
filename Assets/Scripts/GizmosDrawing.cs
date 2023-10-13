@@ -62,3 +62,23 @@ public class GizmosDrawing : MonoBehaviour
 
     }
 }
+//Vector3 topLeftOffset = new Vector3(-hexaRadius, 50, +hexaRadius);
+//Vector3 topRightOffset = new Vector3(+hexaRadius, 50, +hexaRadius);
+//Vector3 left = new Vector3(-hexaRadius, 50, 0);
+//Vector3 right = new Vector3(+hexaRadius, 50, 0);
+//Vector3 botRightOffset = new Vector3(+hexaRadius, 50, -hexaRadius);
+//Vector3 botLeftOffset = new Vector3(-hexaRadius, 50, -hexaRadius);
+
+
+////drawline for convinience
+
+//for (int i = 0; i < hexaPositions.Length; i++)
+//{
+//    Handles.DrawLine((hexaPositions[i] + topLeftOffset), (hexaPositions[i] + topRightOffset));
+//    Handles.DrawLine((hexaPositions[i] + topRightOffset), (hexaPositions[i] + right));
+//    Handles.DrawLine((hexaPositions[i] + right), (hexaPositions[i] + botRightOffset));
+//    Handles.DrawLine((hexaPositions[i] + botRightOffset), (hexaPositions[i] + botLeftOffset));
+//    Handles.DrawLine((hexaPositions[i] + botLeftOffset), (hexaPositions[i] + left));
+//    Handles.DrawLine((hexaPositions[i] + left), (hexaPositions[i] + topLeftOffset));
+//    Debug.Log("why");
+//}
