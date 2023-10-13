@@ -19,7 +19,7 @@ public class GenerateMap : MonoBehaviour
     [Range(1, 10)]
     [SerializeField] int MapSizeMultiplier;
     public static int Mapwidth = 1921;
-    [Range(0, 4)]
+    [Range(0, 8)]
     [SerializeField] int LevelOfDetail;
     [SerializeField] int octaves;
     [SerializeField] float freq;
@@ -71,6 +71,7 @@ public class GenerateMap : MonoBehaviour
     {
         Dictionary<int, List<Vector3>> y = new();
         y = GenerateBiomes.GenerateRndmBiomes(Biomes[0], HexGridX, HexGridY, seed);
+        GameObject.Find("Player").GetComponent<GizmosDrawing>().GetReference(y);
 
         //System.Random rand = new System.Random(seed);
         //int amountOfBiomes = rand.Next(15, 30);

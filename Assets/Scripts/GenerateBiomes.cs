@@ -7,6 +7,7 @@ using UnityEngine;
 using UnityEditor.Rendering;
 using System.Threading;
 using UnityEditor;
+using Unity.VisualScripting;
 
 public static class GenerateBiomes
 {
@@ -35,13 +36,16 @@ public static class GenerateBiomes
         int r = UnityEngine.Random.Range(5, 6);
 
         OozeType[] oozeInstances = new OozeType[r];
-
+        Debug.Log("wtf");
         for (int i = 0; i < r; i++)
         {
+            Debug.Log("is going on");
             oozeInstances[i] = new OozeType(hexGridVectors, listOfNeighbours);
             r_dict.Add(i, oozeInstances[i].OozeProcess());
 
         }
+
+        Debug.Log(r_dict.Count);
 
         return r_dict;
     }

@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,7 +11,7 @@ using UnityEngine;
 public class GizmosDrawing : MonoBehaviour
 {
 
-    Dictionary<int, List<Vector3>> reference = new Dictionary<int, List<Vector3>>();
+    Dictionary<int, List<Vector3>> reference;
 
 
 
@@ -39,41 +40,32 @@ public class GizmosDrawing : MonoBehaviour
         Dictionary <Vector3,int> hexagonNeighbors = new Dictionary <Vector3,int>();
 
 
-        Vector3 topLeftOffset = new Vector3(-r/2, 50, +r/2*Mathf.Sqrt(3));
-        Vector3 topRightOffset = new Vector3(+r / 2, 50, +r/2*Mathf.Sqrt(3));
-        Vector3 left = new Vector3(-r, 50, 0);
-        Vector3 right = new Vector3(+r, 50, 0);
-        Vector3 botRightOffset = new Vector3(+r / 2, 50, -r/2 * Mathf.Sqrt(3));
-        Vector3 botLeftOffset = new Vector3(-r / 2, 50, -r/2 * Mathf.Sqrt(3));
+
 
 
         List<Vector3> list = new List<Vector3>();
-        for (int i = 0;i<reference.ElementAt(0).Value.Count;i++)
-        list.Add(reference.ElementAt(0).Value.ElementAt(i));
 
-        StartCoroutine(Example(0, list));
 
-    }
+            for (int i = 0; i < reference.ElementAt(0).Value.Count; i++)
+                list.Add(reference.ElementAt(0).Value.ElementAt(i));
 
-    IEnumerator Example(int index,List<Vector3> list)
-    {
+
+        if(list.Count > 0) { 
+        int index = 0;
         while (index < list.Count)
         {
-            yield return new EditorWaitForSeconds(2f);
+            Gizmos.color = Color.cyan;
+            Gizmos.DrawCube(list[index], new(100, 1, 100));
+            ++index;
 
-                Gizmos.color = Color.green;
-                Gizmos.DrawCube(list[index], new(100, 1, 100));
-                ++index;
-            Debug.Log("iwashere");
-
+        }
         }
     }
 
-
     public void GetReference(Dictionary<int, List<Vector3>> r_dict)
     {
+        reference = new Dictionary<int, List<Vector3>>();
         reference = r_dict;
-
     }
 }
 //Vector3 topLeftOffset = new Vector3(-hexaRadius, 50, +hexaRadius);

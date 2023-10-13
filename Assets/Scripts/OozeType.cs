@@ -3,11 +3,9 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using UnityEditor.Rendering;
-using System.Threading;
 using UnityEditor;
 
-public class OozeType : MonoBehaviour
+public class OozeType
 {
     private List<Vector3> oindex;
     private List<List<Vector3>> oozeNeighbour_list;
@@ -17,9 +15,10 @@ public class OozeType : MonoBehaviour
 
     public OozeType(List<Vector3[]> ind, List<Vector3[]> neighbours)
     {
+
         oindex = new List<Vector3>();
-        oozedPositions = new List<Vector3>();
         oozeNeighbour_list = new List<List<Vector3>>();
+        oozedPositions = new List<Vector3>();
 
         for (int i = 0; i < ind.Count; ++i)
         {
