@@ -2,17 +2,16 @@
 using System.Collections;
 using UnityEngine;
 
-    //public class PlaceAssets : MonoBehaviour
-    //{
-    //    Action action;
-    //    private void Start()
-    //    {
-    //        action.Invoke();
-    //    }
+public static class PlaceAssets
+{
+    //first thing: need to calculate bounds of hexagon field!
+    
 
-    //    public void FindRightSpot()
-    //    {
-
-    //    }
-        
-    //}
+    public static void CastRayOnTerrain()
+    {   //GetOozedPositions()
+        //CastRayFromAnOozedPosiOnTerrainDown()
+        //DetermineSteepness()
+        //PlaceAssetsInBoundsOfHexagonField()
+        //add rndmoffset to assets()
+    }
+}

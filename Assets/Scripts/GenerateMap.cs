@@ -67,11 +67,13 @@ public class GenerateMap : MonoBehaviour
 
     public void MakeBiomes()
     {
-        Dictionary<int, List<Vector3>> y = new();
-        y = GenerateBiomes.GenerateRndmBiomes(Biomes[0], HexGridX, HexGridY, seed);
+        //int of dict equals type of biom
+        Dictionary<int, OozeType> BiomesDict = new();
+        BiomesDict = GenerateBiomes.GenerateRndmBiomes(HexGridX, HexGridY, seed);
         
 
-        GameObject.Find("Player").GetComponent<GizmosDrawing>().GetReference(y);
+
+        //GameObject.Find("Player").GetComponent<GizmosDrawing>().GetReference(BiomesDict);
         //System.Random rand = new System.Random(seed);
         //int amountOfBiomes = rand.Next(15, 30);
         //int rndmIndex;

@@ -1,15 +1,14 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using UnityEditor;
 
 public class OozeType
 {
     private List<Vector3> oindex;
     private List<List<Vector3>> oozeNeighbour_list;
     private List<Vector3> oozedPositions;
+    float radius;
 
     //constructor
 
@@ -19,6 +18,10 @@ public class OozeType
         oindex = new List<Vector3>();
         oozeNeighbour_list = new List<List<Vector3>>();
         oozedPositions = new List<Vector3>();
+
+        Vector3 point = new Vector3();
+        point = ind.ElementAt(0)[0] - ind.ElementAt(0)[1];
+        radius = point.magnitude;
 
         for (int i = 0; i < ind.Count; ++i)
         {
@@ -36,7 +39,7 @@ public class OozeType
         }
     }
 
-    public List<Vector3> OozeProcess(int seed)
+    public OozeType OozeProcess(int seed)
     {
         System.Random rand = new System.Random(Guid.NewGuid().GetHashCode());
 
@@ -48,7 +51,7 @@ public class OozeType
         
         this.CalculateChance(9, GetTheNeighbours(sample));
 
-        return this.oozedPositions;
+        return this;
     }
 
     private void CalculateChance(int chance, List<Vector3> arg)
