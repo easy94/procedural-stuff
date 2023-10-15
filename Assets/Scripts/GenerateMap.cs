@@ -18,7 +18,7 @@ public class GenerateMap : MonoBehaviour
     [SerializeField] float Scale;
     [Range(1, 10)]
     [SerializeField] int MapSizeMultiplier;
-    public static int Mapwidth = 1921;
+    public static int MapWidth = 1921;
     [Range(0, 8)]
     [SerializeField] int LevelOfDetail;
     [SerializeField] int octaves;
@@ -34,7 +34,7 @@ public class GenerateMap : MonoBehaviour
 
     [Range (6,50)]
     [SerializeField] int HexGridX;
-    int HexGridY;
+    
 
     static Dictionary<Vector3, bool> checkList;
 
@@ -60,7 +60,7 @@ public class GenerateMap : MonoBehaviour
 
     public float[,] GenerateNoiseMap()
     {
-        float[,] noiseMap = GenerateNoise.Generate(Mapwidth * MapSizeMultiplier, Scale, octaves, freq, amp, seed, offSetX, offSetY);
+        float[,] noiseMap = GenerateNoise.Generate(MapWidth * MapSizeMultiplier, Scale, octaves, freq, amp, seed, offSetX, offSetY);
 
         return noiseMap;
     }
@@ -69,7 +69,7 @@ public class GenerateMap : MonoBehaviour
     {
         //int of dict equals type of biom
         Dictionary<int, OozeType> BiomesDict = new();
-        BiomesDict = GenerateBiomes.GenerateRndmBiomes(HexGridX, HexGridY, seed);
+        BiomesDict = GenerateBiomes.GenerateRndmBiomes(MapWidth,HexGridX, seed);
         
 
 

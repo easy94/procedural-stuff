@@ -5,26 +5,17 @@ using UnityEngine;
 
 public class Hexagon
 {
-    int m_gridX;
-    int m_gridY;
-    int mapSize;
-    float r;
+    protected float r;
 
 
-    public Hexagon(int x, int y)
-    {
-        m_gridX = x; m_gridY = y;
-    }
-
-    //construct grid
-    public List<Vector3[]> ConstructGrid(int gridx)
+    public List<Vector3[]> ConstructGrid(int size, int amountOfRows)
     {
 
         //define general size of the single hexagon
-        mapSize = GenerateMap.Mapwidth;
-        r = (int)(mapSize / m_gridX / 1.5f);
-        m_gridX = (int)(mapSize / (r * 1.5));
-        m_gridY = (int)(mapSize / (Mathf.Sqrt(3) * r));
+
+        r = (int)(size / amountOfRows / 1.5f);
+        int m_gridX = (int)(size / (r * 1.5));
+        int m_gridY = (int)(size / (Mathf.Sqrt(3) * r));
         float m_hexagonHeight = Mathf.Sqrt(3) * r;
         float m_hexagonWidth = r * 2;
 
@@ -36,7 +27,7 @@ public class Hexagon
         // center first then topleft clockwise all 6outer points +1center
         //allign with terrain + (terrainOffsets)
 
-       Vector3[] offsets = {
+        Vector3[] offsets = {
             new Vector3(0 - (m_hexagonWidth * .75f / 2), 0, 0 + (m_hexagonHeight / 2)),
             new Vector3(-r / 2 - (m_hexagonWidth * .75f / 2), 50, +r / 2 * Mathf.Sqrt(3) + (m_hexagonHeight / 2)),
             new Vector3(+r / 2 - (m_hexagonWidth * .75f / 2), 50, +r / 2 * Mathf.Sqrt(3) + (m_hexagonHeight / 2)),
@@ -45,14 +36,7 @@ public class Hexagon
             new Vector3(-r / 2 - (m_hexagonWidth * .75f / 2), 50, -r / 2 * Mathf.Sqrt(3) + (m_hexagonHeight / 2)),
             new Vector3(-r - (m_hexagonWidth * .75f / 2), 50, 0 + (m_hexagonHeight / 2)) };
 
-        //Vector3[] offsets = {
-        //    new Vector3(0,0,0),
-        //    new Vector3(-r / 2, 50, +r / 2 * Mathf.Sqrt(3)) ,
-        //    new Vector3(+r / 2, 50, +r / 2 * Mathf.Sqrt(3)),
-        //    new Vector3(+r, 50, 0),
-        //    new Vector3(+r / 2, 50, -r / 2 * Mathf.Sqrt(3)),
-        //    new Vector3(-r / 2, 50, -r / 2 * Mathf.Sqrt(3)),
-        //    new Vector3(-r, 50, 0) };
+
 
         //grid loop defining the grid inside a list: index1 is all hex points for topleft indexlast is bottom right hex points
         //grid zählt in + Y = 1, also von unten links nach oben links, dann repeat +1X
@@ -82,8 +66,13 @@ public class Hexagon
         return grid;
     }
 
-    public List<Vector3[]> GetNeighboursPositions(List<Vector3[]> target)
+    public List<Vector3[]> GetNeighboursPositions(List<Vector3[]> target, int mapsize, int gridX)
     {
+        int m_gridX = gridX;
+        int m_gridY = (int)(mapsize / (Mathf.Sqrt(3) * r));
+
+        if (m_gridX % 2 != 0) m_gridX += 1;
+        if (m_gridY % 2 != 0) m_gridY -= 1;
 
         int k = 0;
         List<Vector3[]> r_arr = new();
@@ -217,6 +206,87 @@ public class Hexagon
         return r_arr;
     }
 
-    public 
+    // maybe extend Bounds with dis code?
+    public bool IsInsideOfHexagon(Vector3 point, Vector3 HexaCenterPos)
+    {
+        //tophalf
+        if ((point.y > HexaCenterPos.y) && point.y - HexaCenterPos.y < Mathf.Sqrt(3) * r / 2)
+        {
+            //somewhere in right half but not yet done
+            if ((point.x > HexaCenterPos.x) && point.x - HexaCenterPos.x > r / 2)
+            {
+                if (Vector3.Dot((GetBRF(HexaCenterPos) - GetTRF(HexaCenterPos)).normalized, (point - GetTRF(HexaCenterPos)).normalized) < .99f &&
+                    Vector3.Dot((GetBRF(HexaCenterPos) - GetTRF(HexaCenterPos)).normalized, (point - GetTRF(HexaCenterPos)).normalized) > .71f)
+                {
+                    return true;
+                }
+                else return false;
+            }
+            //left
+            else if (point.x - HexaCenterPos.x < -r / 2)
+            {
+                if (Vector3.Dot((GetBLF(HexaCenterPos) - GetTLF(HexaCenterPos)).normalized, (point - GetTLF(HexaCenterPos)).normalized) < .99f &&
+                   Vector3.Dot((GetBLF(HexaCenterPos) - GetTLF(HexaCenterPos)).normalized, (point - GetTLF(HexaCenterPos)).normalized) > .71f)
+                {
+                    return true;
+                }
+            }
+            else return false;
 
+
+        }
+        //bothalf
+        else if ((point.y < HexaCenterPos.y) && point.y - HexaCenterPos.y > -Mathf.Sqrt(3) * r / 2)
+        {
+            //right side
+            if ((point.x > HexaCenterPos.x) && point.x - HexaCenterPos.x > r / 2)
+            {
+                if (Vector3.Dot((GetTRF(HexaCenterPos) - GetBRF(HexaCenterPos)).normalized, (point - GetBRF(HexaCenterPos)).normalized) < .99f &&
+                    Vector3.Dot((GetTRF(HexaCenterPos) - GetBRF(HexaCenterPos)).normalized, (point - GetBRF(HexaCenterPos)).normalized) > .71f)
+                {
+                    return true;
+                }
+                else return false;
+            }
+            //leftside
+            else if (point.x - HexaCenterPos.x < -r / 2)
+            {
+                if (Vector3.Dot((GetTLF(HexaCenterPos) - GetBLF(HexaCenterPos)).normalized, (point - GetBLF(HexaCenterPos)).normalized) < .99f &&
+                   Vector3.Dot((GetTLF(HexaCenterPos) - GetBLF(HexaCenterPos)).normalized, (point - GetBLF(HexaCenterPos)).normalized) > .71f)
+                {
+                    return true;
+                }
+                else return false;
+
+            }
+            else return false;
+        }
+
+        return false;
+    }
+
+    public Vector3 GetTLF(Vector3 arg)
+    {
+        return arg + new Vector3(-r / 2, 0, +r / 2 * Mathf.Sqrt(3));
+    }
+    public Vector3 GetTRF(Vector3 arg)
+    {
+        return arg + new Vector3(+r / 2, 0, +r / 2 * Mathf.Sqrt(3));
+    }
+    public Vector3 GetRF(Vector3 arg)
+    {
+        return arg + new Vector3(+r, 0, 0);
+    }
+    public Vector3 GetLF(Vector3 arg)
+    {
+        return arg + new Vector3(+r / 2, 0, -r / 2 * Mathf.Sqrt(3));
+    }
+    public Vector3 GetBRF(Vector3 arg)
+    {
+        return arg + new Vector3(-r / 2, 0, -r / 2 * Mathf.Sqrt(3));
+    }
+    public Vector3 GetBLF(Vector3 arg)
+    {
+        return arg + new Vector3(-r, 0f, 0f);
+    }
 }

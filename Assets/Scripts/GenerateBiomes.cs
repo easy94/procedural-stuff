@@ -12,19 +12,19 @@ using Unity.VisualScripting;
 public static class GenerateBiomes
 {
 
-    public static Dictionary<int, OozeType> GenerateRndmBiomes(int gridX, int gridY, int seed)
+    public static Dictionary<int, OozeType> GenerateRndmBiomes(int mapsize,int gridX, int seed)
     {
         List<Vector3[]> hexGridVectors;
         List<Vector3[]> listOfNeighbours;
-        Hexagon hexagonGrid = new(gridX, gridY);
+        Hexagon hexagonGrid = new();
 
         //flat top hexagon grid positions. each hexagon has its own vector array with the first element being the center point
 
-        hexGridVectors = hexagonGrid.ConstructGrid(gridX);
+        hexGridVectors = hexagonGrid.ConstructGrid(mapsize,gridX);
 
 
         // get neighbours of each hexagon here example: first hexagon has 2 neigbours aka the central points of the adjacent hexas
-        listOfNeighbours = hexagonGrid.GetNeighboursPositions(hexGridVectors);
+        listOfNeighbours = hexagonGrid.GetNeighboursPositions(hexGridVectors, mapsize,gridX);
 
 
         //hexgrid central points and its hexagon neigbours in one dictionary here
