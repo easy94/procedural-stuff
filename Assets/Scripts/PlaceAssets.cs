@@ -4,10 +4,10 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public static class PlaceAssets
-{   
+{
 
     public static void CastRayOnTerrain(OozeType ooze) //GetOozedPositions param
-    {   
+    {
         System.Random rand = new System.Random();
 
 
@@ -20,9 +20,9 @@ public static class PlaceAssets
         return false;
     }
 }
-        
-        //CastRayFromAnRandomPosInsideOozedPosiOnTerrain()
-        //DetermineSteepness()
-        //PlaceAssetsInBoundsOfHexagonField()
-        //add rndmoffset to assets()
-        //place assets at min distance from each other script with ExecutesinEditMode "tag" ?!
+
+//CastRayFromAnRandomPosInsideOozedPosiOnTerrain()
+//DetermineSteepness()
+//PlaceAssetsInBoundsOfHexagonField()
+//add rndmoffset to assets()
+//place assets at min distance from each other script with ExecutesinEditMode "tag" ?!

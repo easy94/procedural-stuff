@@ -6,7 +6,7 @@ using UnityEngine;
 public static class GenerateMesh
 {
 
-    public static Vector3[] UpdateMesh(float[,] noiseMap, float heightmultiplier, AnimationCurve curve, int levelOfDetail, int multi, MeshCollider terrainObject)
+    public static Vector3[] UpdateMesh(float[,] noiseMap, float heightmultiplier, AnimationCurve curve, int levelOfDetail, MeshCollider terrainObject)
     {
         int width = noiseMap.GetLength(0);
         int height = noiseMap.GetLength(1);
@@ -14,7 +14,6 @@ public static class GenerateMesh
         int reduceVertexFactor = (levelOfDetail == 0) ? 1 : levelOfDetail * 2;
         int vertexPerLine = ((noiseMap.GetLength(0) - 1) / reduceVertexFactor) + 1;
 
-        int verticesInTotal = vertexPerLine * vertexPerLine;
 
         Vector2[] uvArr = new Vector2[vertexPerLine * vertexPerLine];
         Vector3[] vertexArr = new Vector3[vertexPerLine * vertexPerLine];
@@ -51,25 +50,25 @@ public static class GenerateMesh
             }
         }
         
-        if(verticesInTotal > 150000)//150'000 is total on single mesh
-        {
-            GameObject terrainChild = GameObject.CreatePrimitive(PrimitiveType.Plane);
-            Mesh meshChild = new Mesh();
+        //if(verticesInTotal > 150000)//150'000 is total on single mesh
+        //{
+        //    GameObject terrainChild = GameObject.CreatePrimitive(PrimitiveType.Plane);
+        //    Mesh meshChild = new Mesh();
 
-            int currentLine = 0;
-            int endOfLine = vertexPerLine;
-            int startOfLine = 0 + (vertexPerLine * currentLine);
-            for (int x = 0; x < vertexPerLine/2; x++)
-            {
-                for (int y = 0; y < vertexPerLine/2; y++)
-                {
+        //    int currentLine = 0;
+        //    int endOfLine = vertexPerLine;
+        //    int startOfLine = 0 + (vertexPerLine * currentLine);
+        //    for (int x = 0; x < vertexPerLine/2; x++)
+        //    {
+        //        for (int y = 0; y < vertexPerLine/2; y++)
+        //        {
                     
 
-                }
-            }
+        //        }
+        //    }
 
-            terrainChild.transform.SetParent(terrainObject.transform);
-        }
+        //    terrainChild.transform.SetParent(terrainObject.transform);
+        //}
 
         //remove
         terrainObject.GetComponent<MeshCollider>().sharedMesh.Clear();

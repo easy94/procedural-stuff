@@ -6,31 +6,17 @@ using Random = UnityEngine.Random;
 
 public class GenerateMap : MonoBehaviour
 {
-
-
-
-    public AnimationCurve curve;
+    public LevelData levelData;
 
     [SerializeField] MeshCollider meshCollider;
     //DrawNoiseTexture noiseTexture;
-    [SerializeField] int offSetX;
-    [SerializeField] int offSetY;
-    [SerializeField] float Scale;
+    
     [Range(1, 10)]
     [SerializeField] int MapSizeMultiplier;
-    public static int MapWidth = 1921;
-    [Range(0, 8)]
-    [SerializeField] int LevelOfDetail;
-    [SerializeField] int octaves;
-    [SerializeField] float freq;
-    [SerializeField] float amp;
-    [SerializeField] int seed;
-    [SerializeField] float heightmultiplier;
-    [SerializeField] Gradient gradient;
+    public static int MapWidth = 961;
+
     MapData mapData = new MapData();
     public Biomes[] Biomes;
-
-    private Dictionary<Vector3, Vector3[]> hexagonDictionary;
 
     [Range (6,50)]
     [SerializeField] int HexGridX;
@@ -39,8 +25,8 @@ public class GenerateMap : MonoBehaviour
     static Dictionary<Vector3, bool> checkList;
 
     public bool autoUpdate;
+
     // test normals for steepness
-    //Debug.Log(terrainObject.GetComponent<Mesh>().normals[0]);
 
     public void DrawMapData()
     {
@@ -51,16 +37,16 @@ public class GenerateMap : MonoBehaviour
         //noiseTexture = FindObjectOfType<DrawNoiseTexture>();
 
         mapData.NoiseValueData = GenerateNoiseMap();
-        mapData.MeshData = GenerateMesh.UpdateMesh(mapData.NoiseValueData, heightmultiplier, curve, LevelOfDetail, MapSizeMultiplier, meshCollider);
+        mapData.MeshData = GenerateMesh.UpdateMesh(mapData.NoiseValueData, levelData.heightmultiplier, levelData.curve, levelData.LevelOfDetail, meshCollider);
         // PlaceAssets();
-        mapData.ColorData =GenerateVertexColor.PaintVerts(mapData.MeshData, gradient);
+        mapData.ColorData =GenerateVertexColor.PaintVerts(mapData.MeshData, levelData.gradient);
         meshCollider.GetComponent<MeshFilter>().sharedMesh.colors = mapData.ColorData;
 
     }
 
     public float[,] GenerateNoiseMap()
     {
-        float[,] noiseMap = GenerateNoise.Generate(MapWidth * MapSizeMultiplier, Scale, octaves, freq, amp, seed, offSetX, offSetY);
+        float[,] noiseMap = GenerateNoise.Generate(MapWidth * MapSizeMultiplier, levelData.Scale, levelData.octaves, levelData.freq, levelData.amp, levelData.seed, levelData.offSetX, levelData.offSetY);
 
         return noiseMap;
     }
@@ -69,7 +55,7 @@ public class GenerateMap : MonoBehaviour
     {
         //int of dict equals type of biom
         Dictionary<int, OozeType> BiomesDict = new();
-        BiomesDict = GenerateBiomes.GenerateRndmBiomes(MapWidth,HexGridX, seed);
+        BiomesDict = GenerateBiomes.GenerateRndmBiomes(MapWidth,HexGridX, levelData.seed);
         
 
 

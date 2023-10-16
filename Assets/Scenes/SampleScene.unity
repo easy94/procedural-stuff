@@ -134,7 +134,6 @@ GameObject:
   - component: {fileID: 126016008}
   - component: {fileID: 126016007}
   - component: {fileID: 126016006}
-  - component: {fileID: 126016009}
   m_Layer: 0
   m_Name: MapGenerator
   m_TagString: Untagged
@@ -166,152 +165,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 12ca01a56b79dd7479fd90341566f35f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  curve:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0.00062561035
-      value: 0.0029907227
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0
-    - serializedVersion: 3
-      time: 0.14038742
-      value: 0.0034832638
-      inSlope: 0.10460624
-      outSlope: 0.10460624
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.33333334
-    - serializedVersion: 3
-      time: 0.14282767
-      value: 0.01733735
-      inSlope: 0.004533961
-      outSlope: 0.004533961
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.30982134
-      outWeight: 0.33333334
-    - serializedVersion: 3
-      time: 0.24797162
-      value: 0.017722698
-      inSlope: 0.0042877537
-      outSlope: 0.0042877537
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.5236365
-    - serializedVersion: 3
-      time: 0.25157997
-      value: 0.04007552
-      inSlope: -0.00023364238
-      outSlope: -0.00023364238
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.23845802
-    - serializedVersion: 3
-      time: 0.3499909
-      value: 0.041452248
-      inSlope: -0.0024423068
-      outSlope: -0.0024423068
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 1
-    - serializedVersion: 3
-      time: 0.4311684
-      value: 0.06276113
-      inSlope: -0.015842667
-      outSlope: -0.015842667
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.70619494
-    - serializedVersion: 3
-      time: 0.49791083
-      value: 0.106440626
-      inSlope: 0.00049407035
-      outSlope: 0.00049407035
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.789378
-    - serializedVersion: 3
-      time: 0.602706
-      value: 0.11520739
-      inSlope: 0.12401322
-      outSlope: 0.12401322
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.33333334
-    - serializedVersion: 3
-      time: 0.71466744
-      value: 0.57324845
-      inSlope: 1.6490841
-      outSlope: 1.6490841
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.104115985
-    - serializedVersion: 3
-      time: 0.7425252
-      value: 0.6199271
-      inSlope: 0.32808903
-      outSlope: 0.32808903
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 1
-      outWeight: 0
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
+  levelData: {fileID: 11400000, guid: 50ccf41c7b04a594b801fa52fac97880, type: 2}
   meshCollider: {fileID: 1992031058}
-  offSetX: 303
-  offSetY: 2794
-  Scale: 502.4
   MapSizeMultiplier: 1
-  LevelOfDetail: 8
-  octaves: 4
-  freq: 2.7
-  amp: 0.48
-  seed: -6826
-  heightmultiplier: 35
-  gradient:
-    serializedVersion: 2
-    key0: {r: 0, g: 1, b: 0, a: 1}
-    key1: {r: 1, g: 1, b: 0, a: 1}
-    key2: {r: 1, g: 0, b: 0, a: 0}
-    key3: {r: 0.8252121, g: 1, b: 0, a: 0}
-    key4: {r: 0, g: 0, b: 0, a: 0}
-    key5: {r: 0, g: 0, b: 0, a: 0}
-    key6: {r: 0, g: 0, b: 0, a: 0}
-    key7: {r: 0, g: 0, b: 0, a: 0}
-    ctime0: 9830
-    ctime1: 44333
-    ctime2: 56861
-    ctime3: 65535
-    ctime4: 0
-    ctime5: 0
-    ctime6: 0
-    ctime7: 0
-    atime0: 0
-    atime1: 65535
-    atime2: 0
-    atime3: 0
-    atime4: 0
-    atime5: 0
-    atime6: 0
-    atime7: 0
-    m_Mode: 0
-    m_ColorSpace: 0
-    m_NumColorKeys: 3
-    m_NumAlphaKeys: 2
   Biomes:
   - name: Forest
     curve:
@@ -411,25 +267,13 @@ Transform:
   m_GameObject: {fileID: 126016005}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -1}
-  m_LocalScale: {x: 290, y: 1, z: 290}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 328589648}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &126016009
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 126016005}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: dcfcb7882cc32844d8a37b3c2e74820a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &328589646
 GameObject:
   m_ObjectHideFlags: 0
@@ -606,8 +450,8 @@ Camera:
     width: 1
     height: 1
   near clip plane: 0.01
-  far clip plane: 10000
-  field of view: 27.7
+  far clip plane: 1000
+  field of view: 31.4
   orthographic: 0
   orthographic size: 1000
   m_Depth: -1
@@ -633,13 +477,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 963194225}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: 971.4, y: 4143.5, z: 953.5}
+  m_LocalRotation: {x: 0.40659013, y: 0.5785192, z: -0.40659013, w: 0.5785192}
+  m_LocalPosition: {x: 51.41, y: -9, z: 48.899}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 70.2, y: 90, z: 0}
 --- !u!1 &1992031057
 GameObject:
   m_ObjectHideFlags: 0
@@ -758,6 +602,8 @@ GameObject:
   - component: {fileID: 2133788172}
   - component: {fileID: 2133788171}
   - component: {fileID: 2133788170}
+  - component: {fileID: 2133788175}
+  - component: {fileID: 2133788174}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -844,13 +690,55 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2133788169}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.5683583, y: 0.25543752, z: -0.1869568, w: 0.7594522}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 58.78, y: -30.3, z: 48.49}
   m_LocalScale: {x: 1, y: 2.09, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2133788174
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2133788169}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5a6ae95287c5dd74b95cee04b8e3ec74, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  walk_Speed: 10
+  rotate_Speed: 25
+  cam: {fileID: 963194227}
+--- !u!54 &2133788175
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2133788169}
+  serializedVersion: 4
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
