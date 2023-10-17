@@ -92,7 +92,7 @@ public static class GenerateMesh
         terrainObject.GetComponent<MeshCollider>().sharedMesh.RecalculateNormals();
 
         MeshCollider collider = terrainObject.GetComponent<MeshCollider>();
-        //collider.sharedMesh = terrainObject.GetComponent<MeshCollider>().sharedMesh;
+        collider.sharedMesh = terrainObject.GetComponent<MeshCollider>().sharedMesh;
         terrainObject.name = "test";
         //
 

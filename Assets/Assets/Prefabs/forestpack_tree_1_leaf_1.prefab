@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 205548538367759612}
   - component: {fileID: 136328532474461060}
   - component: {fileID: 558181891522258339}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: forestpack_tree_1_leaf_1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -127,7 +127,7 @@ LODGroup:
     fadeTransitionWidth: 0
     renderers:
     - renderer: {fileID: 23594291711623232}
-  m_Enabled: 1
+  m_Enabled: 0
 --- !u!136 &136328532474461060
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -158,7 +158,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1490343738201892}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e49301e3fc4931d48b0bc5577d6f9230, type: 3}
   m_Name: 

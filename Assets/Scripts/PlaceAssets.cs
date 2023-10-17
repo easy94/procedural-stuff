@@ -6,37 +6,36 @@ using UnityEngine;
 
 public static class PlaceAssets
 {
-    private static readonly System.Random random = new(Guid.NewGuid().GetHashCode());
+    private static System.Random random;
 
     //make randompos before steepcheck
-    public static OozeType CastRayOnTerrain(OozeType ooze) //GetOozedPositions param
+    public static Vector3[] CastRayOnTerrain(Vector3 x) //GetOozedPositions param
     {
-        Ray ray = new Ray();
-        ray.direction = Vector3.down;
-        _ = new RaycastHit();
+        Vector3[] r_arr = new Vector3[1];
 
-        for (int i = 0; i < ooze.GetOozedPositions().Count; ++i)
+        random = new(Guid.NewGuid().GetHashCode());
+        RaycastHit hit = new RaycastHit();
+
+        Vector3 pos = RandomizePosition(x); // randomize position should return list of random vectors inside a hexagon
+        Physics.Raycast(pos, Vector3.down, out hit, 150f);
+
+        // isnotsteep should take list
+        if (IsNotSteep(hit))
+            x = hit.point;
+        else
         {
-            Vector3 pos = RandomizePosition(ooze.GetOozedPositions()[i]);
-            Physics.Raycast(pos, Vector3.down, out RaycastHit hit, 55f);
-
-            if (IsNotSteep(hit))
-                ooze.GetOozedPositions()[i] = hit.point;
-            else
-            {
-                ooze.GetOozedPositions().RemoveAt(i);
-                Debug.Log(ooze.GetOozedPositions()[i]+"else");
-            }
+            x = Vector3.zero;
         }
 
-        return ooze;
+        //return array
+        return r_arr;
     }
 
     private static bool IsNotSteep(RaycastHit x)
     {
         Vector3 normalDir = x.normal.normalized;
 
-        if (Vector3.Dot(normalDir, Vector3.down.normalized) < -0.8f)
+        if (Vector3.Dot(normalDir, Vector3.down.normalized) < -0.95f)
         {
             return true;
         }
@@ -47,8 +46,8 @@ public static class PlaceAssets
     private static Vector3 RandomizePosition(Vector3 pos)
     {
         float x, y;
-        x = random.Next(0, 5);
-        y = random.Next(0, 5);
+        x = random.Next(-15, 15);
+        y = random.Next(-15, 15);
 
         return pos + new Vector3((float)random.NextDouble() * x, 0f, (float)random.NextDouble() * y);
     }

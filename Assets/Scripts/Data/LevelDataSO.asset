@@ -52,7 +52,7 @@ MonoBehaviour:
   octaves: 3
   freq: 1.8
   amp: 0.63
-  seed: -2561
+  seed: 2236
   heightmultiplier: 38.3
   gradient:
     serializedVersion: 2
