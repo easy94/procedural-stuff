@@ -6,35 +6,51 @@ using UnityEngine;
 
 public static class PlaceAssets
 {
+    private static readonly System.Random random = new(Guid.NewGuid().GetHashCode());
 
-    public static void CastRayOnTerrain(OozeType ooze) //GetOozedPositions param
+    //make randompos before steepcheck
+    public static OozeType CastRayOnTerrain(OozeType ooze) //GetOozedPositions param
     {
-        System.Random rand = new System.Random();
         Ray ray = new Ray();
         ray.direction = Vector3.down;
-        RaycastHit hit = new RaycastHit();
+        _ = new RaycastHit();
 
-        foreach (var item in ooze.GetOozedPositions())
+        for (int i = 0; i < ooze.GetOozedPositions().Count; ++i)
         {
-            Physics.Raycast(item,Vector3.down,out hit);
-            if (IsNotSteep(hit))
-            {
+            Vector3 pos = RandomizePosition(ooze.GetOozedPositions()[i]);
+            Physics.Raycast(pos, Vector3.down, out RaycastHit hit, 55f);
 
+            if (IsNotSteep(hit))
+                ooze.GetOozedPositions()[i] = hit.point;
+            else
+            {
+                ooze.GetOozedPositions().RemoveAt(i);
+                Debug.Log(ooze.GetOozedPositions()[i]+"else");
             }
         }
 
+        return ooze;
     }
 
-    public static bool IsNotSteep(RaycastHit x)
+    private static bool IsNotSteep(RaycastHit x)
     {
+        Vector3 normalDir = x.normal.normalized;
 
+        if (Vector3.Dot(normalDir, Vector3.down.normalized) < -0.8f)
+        {
+            return true;
+        }
 
         return false;
     }
-}
 
-//CastRayFromAnRandomPosInsideOozedPosiOnTerrain()
-//DetermineSteepness()
-//PlaceAssetsInBoundsOfHexagonField()
-//add rndmoffset to assets()
-//place assets at min distance from each other script with ExecutesinEditMode "tag" ?!
+    private static Vector3 RandomizePosition(Vector3 pos)
+    {
+        float x, y;
+        x = random.Next(0, 5);
+        y = random.Next(0, 5);
+
+        return pos + new Vector3((float)random.NextDouble() * x, 0f, (float)random.NextDouble() * y);
+    }
+
+}

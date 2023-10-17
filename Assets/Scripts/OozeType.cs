@@ -10,13 +10,13 @@ public class OozeType:Hexagon
     private List<Vector3> oindex;
     private List<List<Vector3>> oozeNeighbour_list;
     private List<Vector3> oozedPositions;
-    
+    private static System.Random random;
 
     //constructor
 
     public OozeType(List<Vector3[]> ind, List<Vector3[]> neighbours)
     {
-
+       random = new System.Random(Guid.NewGuid().GetHashCode());
         oindex = new List<Vector3>();
         oozeNeighbour_list = new List<List<Vector3>>();
         oozedPositions = new List<Vector3>();
@@ -58,7 +58,6 @@ public class OozeType:Hexagon
 
     private void CalculateChance(int chance, List<Vector3> arg)
     {
-        System.Random random = new System.Random(Guid.NewGuid().GetHashCode());
 
         if (arg.Count <= 0) return;
         for (int i = 0; i < arg.Count; ++i)

@@ -265,27 +265,27 @@ public class Hexagon
         return false;
     }
 
-    public Vector3 GetTLF(Vector3 arg)
+    private Vector3 GetTLF(Vector3 arg)
     {
         return arg + new Vector3(-r / 2, 0, +r / 2 * Mathf.Sqrt(3));
     }
-    public Vector3 GetTRF(Vector3 arg)
+    private Vector3 GetTRF(Vector3 arg)
     {
         return arg + new Vector3(+r / 2, 0, +r / 2 * Mathf.Sqrt(3));
     }
-    public Vector3 GetRF(Vector3 arg)
+    private Vector3 GetRF(Vector3 arg)
     {
         return arg + new Vector3(+r, 0, 0);
     }
-    public Vector3 GetLF(Vector3 arg)
+    private Vector3 GetLF(Vector3 arg)
     {
         return arg + new Vector3(+r / 2, 0, -r / 2 * Mathf.Sqrt(3));
     }
-    public Vector3 GetBRF(Vector3 arg)
+    private Vector3 GetBRF(Vector3 arg)
     {
         return arg + new Vector3(-r / 2, 0, -r / 2 * Mathf.Sqrt(3));
     }
-    public Vector3 GetBLF(Vector3 arg)
+    private Vector3 GetBLF(Vector3 arg)
     {
         return arg + new Vector3(-r, 0f, 0f);
     }

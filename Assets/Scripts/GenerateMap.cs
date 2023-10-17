@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEditor;
 using UnityEngine;
 using Random = UnityEngine.Random;
@@ -10,7 +11,7 @@ public class GenerateMap : MonoBehaviour
 
     [SerializeField] MeshCollider meshCollider;
     //DrawNoiseTexture noiseTexture;
-    
+
     [Range(1, 10)]
     [SerializeField] int MapSizeMultiplier;
     public static int MapWidth = 961;
@@ -18,9 +19,9 @@ public class GenerateMap : MonoBehaviour
     MapData mapData = new MapData();
     public Biomes[] Biomes;
 
-    [Range (6,50)]
+    [Range(6, 50)]
     [SerializeField] int HexGridX;
-    
+    private List<OozeType> OozeList;
 
     static Dictionary<Vector3, bool> checkList;
 
@@ -38,8 +39,8 @@ public class GenerateMap : MonoBehaviour
 
         mapData.NoiseValueData = GenerateNoiseMap();
         mapData.MeshData = GenerateMesh.UpdateMesh(mapData.NoiseValueData, levelData.heightmultiplier, levelData.curve, levelData.LevelOfDetail, meshCollider);
-        // PlaceAssets();
-        mapData.ColorData =GenerateVertexColor.PaintVerts(mapData.MeshData, levelData.gradient);
+        // PlaceAsset();
+        mapData.ColorData = GenerateVertexColor.PaintVerts(mapData.MeshData, levelData.gradient);
         meshCollider.GetComponent<MeshFilter>().sharedMesh.colors = mapData.ColorData;
 
     }
@@ -54,9 +55,9 @@ public class GenerateMap : MonoBehaviour
     public void MakeBiomes()
     {
         //int of dict equals type of biom
-        Dictionary<int, OozeType> BiomesDict = new();
-        BiomesDict = GenerateBiomes.GenerateRndmBiomes(MapWidth,HexGridX, levelData.seed);
-        
+        OozeList = new();
+        OozeList = GenerateBiomes.GenerateRndmBiomes(MapWidth, HexGridX, levelData.seed);
+
 
 
         //GameObject.Find("Player").GetComponent<GizmosDrawing>().GetReference(BiomesDict);
@@ -103,40 +104,32 @@ public class GenerateMap : MonoBehaviour
         //    Biomes[i].vertexPos.Clear();
         //}
     }
-    
-    //improveable**************
-    public void PlaceAssets()
-    {
-        //to save positions where object already has been placed
-        checkList = new Dictionary<Vector3, bool>();
 
-        for (int i = 0; i < Biomes.Length; i++)
-        {//get the vertexpositions this biom belongs to
-            List<Vector3> arrayToIterate = Biomes[i].vertexPos;
-            foreach (Vector3 e in arrayToIterate)
-            {
-                
-                if (!checkList.ContainsKey(e))
-                    checkList.Add(e, true);
-                //50% chance to not place item after adding position to checklist
-                if (Fiftyfifty()==true)
-                {
-                    GameObject newItem = Instantiate(Biomes[i].assets[Random.Range(0, Biomes[i].assets.Length)], new(e.x, e.y, e.z), Quaternion.Euler(0, Random.Range(0, 181), 0));
-                    newItem.transform.SetParent(meshCollider.transform);
-                }
-            }
-        }
-        //for now this is best position for deleting stuttering editor
-        for (int i = 0; i < Biomes.Length; i++)
+    //improveable**************
+    public void PlaceAsset()
+    {
+        foreach (var item in OozeList)
         {
-            Biomes[i].vertexPos.Clear();
+            PlaceAssets.CastRayOnTerrain(item);
+        }
+
+        for (int i = 0; i < OozeList.Count; i++)
+        {
+            for (int j = 0; j < OozeList.ElementAt(i).GetOozedPositions().Count; j++)
+            {
+              // Instantiate OozeList.ElementAt(i).GetOozedPositions().ElementAt(j);
+
+            }
         }
 
     }
 
+
+
+
     private bool Fiftyfifty()
     {
-        return (Random.value * 1>.5f);
+        return (Random.value * 1 > .5f);
     }
 }
 

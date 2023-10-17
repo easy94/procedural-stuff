@@ -10,7 +10,7 @@ using Unity.VisualScripting;
 public static class GenerateBiomes
 {
 
-    public static Dictionary<int, OozeType> GenerateRndmBiomes(int mapsize, int gridX, int seed)
+    public static List<OozeType> GenerateRndmBiomes(int mapsize, int gridX, int seed)
     {
         List<Vector3[]> hexGridVectors;
         List<Vector3[]> listOfNeighbours;
@@ -26,7 +26,7 @@ public static class GenerateBiomes
 
 
         //hexgrid central points and its hexagon neigbours in one dictionary here
-        Dictionary<int, OozeType> r_dict = new();
+        List<OozeType> r_dict = new();
 
         //init oozetypes here********************************************
         int r = 12;
@@ -37,7 +37,7 @@ public static class GenerateBiomes
         for (int i = 0; i < r; i++)
         {
             oozeInstances[i] = new OozeType(hexGridVectors, listOfNeighbours);
-            r_dict.Add(i, oozeInstances[i].OozeProcess(seed));
+            r_dict.Add(oozeInstances[i].OozeProcess(seed));
 
         }
 
