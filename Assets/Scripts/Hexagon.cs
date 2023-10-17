@@ -28,13 +28,13 @@ public class Hexagon
         //allign with terrain + (terrainOffsets)
 
         Vector3[] offsets = {
-            new Vector3(0 - (m_hexagonWidth * .75f / 2), 0, 0 + (m_hexagonHeight / 2)),
-            new Vector3(-r / 2 - (m_hexagonWidth * .75f / 2), 50, +r / 2 * Mathf.Sqrt(3) + (m_hexagonHeight / 2)),
-            new Vector3(+r / 2 - (m_hexagonWidth * .75f / 2), 50, +r / 2 * Mathf.Sqrt(3) + (m_hexagonHeight / 2)),
-            new Vector3(+r - (m_hexagonWidth * .75f / 2), 50, 0 + (m_hexagonHeight / 2)),
-            new Vector3(+r / 2 - (m_hexagonWidth * .75f / 2), 50, -r / 2 * Mathf.Sqrt(3) + (m_hexagonHeight / 2)),
-            new Vector3(-r / 2 - (m_hexagonWidth * .75f / 2), 50, -r / 2 * Mathf.Sqrt(3) + (m_hexagonHeight / 2)),
-            new Vector3(-r - (m_hexagonWidth * .75f / 2), 50, 0 + (m_hexagonHeight / 2)) };
+            new Vector3(0 - (m_hexagonWidth * .75f / 2),      100, 0 + (m_hexagonHeight / 2)),
+            new Vector3(-r / 2 - (m_hexagonWidth * .75f / 2), 100, +r / 2 * Mathf.Sqrt(3) + (m_hexagonHeight / 2)),
+            new Vector3(+r / 2 - (m_hexagonWidth * .75f / 2), 100, +r / 2 * Mathf.Sqrt(3) + (m_hexagonHeight / 2)),
+            new Vector3(+r - (m_hexagonWidth * .75f / 2),     100, 0 + (m_hexagonHeight / 2)),
+            new Vector3(+r / 2 - (m_hexagonWidth * .75f / 2), 100, -r / 2 * Mathf.Sqrt(3) + (m_hexagonHeight / 2)),
+            new Vector3(-r / 2 - (m_hexagonWidth * .75f / 2), 100, -r / 2 * Mathf.Sqrt(3) + (m_hexagonHeight / 2)),
+            new Vector3(-r - (m_hexagonWidth * .75f / 2),     100, 0 + (m_hexagonHeight / 2)) };
 
 
 

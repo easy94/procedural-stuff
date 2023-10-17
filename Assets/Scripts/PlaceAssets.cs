@@ -10,6 +10,7 @@ public static class PlaceAssets
     {
         System.Random rand = new System.Random();
 
+        
 
     }
 

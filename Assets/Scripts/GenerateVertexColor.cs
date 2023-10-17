@@ -26,7 +26,6 @@ public static class GenerateVertexColor
             }
 
             vertexColors[x] = grad.Evaluate(Mathf.InverseLerp(min,max,height));
-            //next set up shader graph
         }
 
 

@@ -6,6 +6,9 @@ using UnityEngine;
 public static class GenerateMesh
 {
 
+        public static float minMeshHeight;
+        public static float maxMeshHeight;
+
     public static Vector3[] UpdateMesh(float[,] noiseMap, float heightmultiplier, AnimationCurve curve, int levelOfDetail, MeshCollider terrainObject)
     {
         int width = noiseMap.GetLength(0);
@@ -21,15 +24,23 @@ public static class GenerateMesh
 
         int j = 0;
         int k = 0;
+
+        minMeshHeight = float.MaxValue;
+        maxMeshHeight = float.MinValue;
+
         //generate vertices array + triangle array + uv array
         for (int x = 0; x < width; x += reduceVertexFactor)
         {
             for (int y = 0; y < height; y += reduceVertexFactor)
             {
                 
-                //Debug.Log(k);
                 vertexArr[k] = new Vector3(x, (curve.Evaluate(noiseMap[x, y]) * heightmultiplier), y);
                 uvArr[k] = new Vector2((float)x / width, (float)y / height);
+
+                if (vertexArr[k].y > maxMeshHeight)
+                    maxMeshHeight = vertexArr[k].y;
+                if (vertexArr[k].y < minMeshHeight)
+                    minMeshHeight = vertexArr[k].y;
 
                 if (y < height - 1 && x < height - 1)
                 {

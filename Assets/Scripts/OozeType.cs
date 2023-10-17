@@ -72,6 +72,14 @@ public class OozeType:Hexagon
         return;
     }
 
+    public void RemoveOoze(Vector3 target)
+    {
+        this.oozedPositions.Remove(target);
+    }
+    public List<Vector3> GetOozedPositions()
+    {
+        return this.oozedPositions;
+    }
 
     private List<Vector3> NextRoundOfNeighbours(Vector3 target)
     {

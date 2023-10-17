@@ -7,6 +7,7 @@ public class PlayerController : MonoBehaviour
     public float walk_Speed;
     public float rotate_Speed;
     public Camera cam;
+    public float cameraZoom;
 
     // Start is called before the first frame update
     void Start()
@@ -17,7 +18,7 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        cam.transform.position = transform.position + new Vector3(-7f,30f,1f);
+        cam.transform.position = transform.position + new Vector3(-7f-(cameraZoom*0.233f),30f+cameraZoom,1f + cameraZoom * (1/30));
 
         if (Input.GetKey(KeyCode.W)) {
             transform.position += transform.forward * (Time.deltaTime * walk_Speed);

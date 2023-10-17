@@ -146,12 +146,12 @@ public struct MapData
     public Vector3[] MeshData;
     public Color[] ColorData;
 
-    public MapData(float[,] noise, Color[] color, Vector3[] verts)
-    {
-        NoiseValueData = noise;
-        ColorData = color;
-        MeshData = verts;
-    }
+    //public MapData(float[,] noise, Color[] color, Vector3[] verts)
+    //{
+    //    NoiseValueData = noise;
+    //    ColorData = color;
+    //    MeshData = verts;
+    //}
 }
 
 [System.Serializable]
