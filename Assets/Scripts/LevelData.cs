@@ -17,5 +17,6 @@ public class LevelData : ScriptableObject
     public int seed;
     public float heightmultiplier;
     public Gradient gradient;
+     
 
 }

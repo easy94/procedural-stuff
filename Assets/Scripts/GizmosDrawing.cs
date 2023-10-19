@@ -4,76 +4,46 @@ using UnityEngine;
 public class GizmosDrawing : MonoBehaviour
 {
 
-    Dictionary<int, List<Vector3>> reference;
+    List<Vector3> reference;
 
 
 
     [ExecuteInEditMode]
     private void OnDrawGizmos()
     {
+        //int j = 0;
 
-        float r = 1920 / 100 * 6;
-        float heightDist = r * Mathf.Sqrt(3);
-        float widthDist = 1.5f * r;
-        Vector3[] hexaPositions = new Vector3[120];
-        //flat top
-        int k = 0;
-        for (int x = 0; x < 12; ++x)
-        {
-            for (int y = 0; y < 10; ++y)
+
+        //Gizmos.color = Color.magenta;
+        //for (int i = 0; i < reference.Count; i++)
+        //{
+        //    if (j == 0) Gizmos.color = Color.red;
+        //    if (j == 1) Gizmos.color = Color.green;
+        //    if (j == 2)
+        //    {
+        //        Gizmos.color = Color.blue;
+        //        j = 0;
+        //    }
+
+        //    j++;
+
+            foreach (Vector3 item in reference)
             {
-                if (x % 2 == 0 || x == 0)
-                    hexaPositions[k] = new((widthDist * x) + r / 2 / 2, 0, (heightDist * y) - (heightDist / 2) + (0.75f * heightDist));
-                else
-                    hexaPositions[k] = new(widthDist * x + r / 2 / 2, 0, (heightDist * y) + 0.75f * heightDist);
-                ++k;
-            }
-        }
+                Gizmos.DrawCube(item + new Vector3(0,100,0), new(40, 1, 40));
 
-        Dictionary<Vector3, int> hexagonNeighbors = new Dictionary<Vector3, int>();
-
-
-
-
-
-        List<Vector3[]> list = new List<Vector3[]>();
-
-
-        foreach (List<Vector3> item in reference.Values)
-        {
-            list.Add(item.ToArray());
-        }
-
-        int j = 0;
-
-
-        Gizmos.color = Color.magenta;
-        foreach (Vector3[] item in list)
-        {
-            foreach (Vector3 vector in item)
-            {
-                Gizmos.DrawCube(vector, new(100, 1, 100));
             }
 
-            if (j == 0) Gizmos.color = Color.red;
-            if (j == 1) Gizmos.color = Color.green;
-            if (j == 2)
-            {
-                Gizmos.color = Color.blue;
-                j = 0;
-            }
 
-            j++;
-        }
+        //}
 
     }
-
-    public void GetReference(Dictionary<int, List<Vector3>> r_dict)
+    public void GetReference(List<Vector3> x)
     {
-        reference = new Dictionary<int, List<Vector3>>();
-        reference = r_dict;
+        reference = new List<Vector3>(); 
+        reference = x;
     }
 }
+
 //Vector3 topLeftOffset = new Vector3(-hexaRadius, 50, +hexaRadius);
 //Vector3 topRightOffset = new Vector3(+hexaRadius, 50, +hexaRadius);
 //Vector3 left = new Vector3(-hexaRadius, 50, 0);

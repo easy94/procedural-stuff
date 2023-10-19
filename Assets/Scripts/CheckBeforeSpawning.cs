@@ -6,22 +6,16 @@ using UnityEngine.UIElements;
 
 public class CheckBeforeSpawning : MonoBehaviour
 {
-
-    private void OnEnable()
+    [ExecuteInEditMode]
+    private void OnValidate()
     {
-        Collider collider = GetComponent<Collider>();
-        if (Physics.OverlapSphere(transform.position, 6) is Collider[])
+        if (Physics.OverlapSphere(transform.position, 2) is Collider[] s)
         {
-            //PlaceItem
+            if(s.Length > 0)
+            {
+                DestroyImmediate(gameObject);
+            }
         }
-        else
-        {
-            //try place at different location optimally
-        }
-        
-        
     }
     
-    
-
 }

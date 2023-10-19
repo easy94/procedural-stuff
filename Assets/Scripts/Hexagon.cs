@@ -1,26 +1,54 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Emit;
 using UnityEngine;
 
+public interface IGrid
+{
+    public int gridX { get; set; }
+    public int gridY { get; set; }
+    //how big are the grid fields
+    public int size { get; set; }
 
-public class Hexagon
+
+    public List<Vector3[]> ConstructGrid(int amountOfCols, int amountOfRows);
+    public List<Vector3[]> SetNeighboursPositions(int mapsize, int gridX);
+
+}
+
+public class Hexagon : IGrid
 {
     protected float r;
+    public float rad { get => r; set => r = value; }
+
+    public int size { get; set; }
+    public int gridX { get; set; }
+    public int gridY { get; set; }
 
 
-    public List<Vector3[]> ConstructGrid(int size, int amountOfRows)
+    public List<Vector3> centralPoints;
+    protected List<Vector3[]> hexagonCorners;
+    public List<List<Vector3>> neighbours;
+
+
+
+    public List<Vector3[]> ConstructGrid(int sizeM, int amountOfRows)
     {
-
+        neighbours = new();
+        hexagonCorners = new();
+        centralPoints = new();
         //define general size of the single hexagon
 
+        size = sizeM;
         r = (int)(size / amountOfRows / 1.5f);
-        int m_gridX = (int)(size / (r * 1.5));
-        int m_gridY = (int)(size / (Mathf.Sqrt(3) * r));
+        gridX = (int)(size / (r * 1.5));
+        gridY = (int)(size / (Mathf.Sqrt(3) * r));
+
         float m_hexagonHeight = Mathf.Sqrt(3) * r;
         float m_hexagonWidth = r * 2;
 
-        if (m_gridX % 2 != 0) m_gridX += 1;
-        if (m_gridY % 2 != 0) m_gridY -= 1;
+        if (gridX % 2 != 0) gridX += 1;
+        if (gridY % 2 != 0) gridY -= 1;
 
 
         //define boundaries of the hexagons
@@ -44,10 +72,9 @@ public class Hexagon
 
         List<Vector3[]> grid = new();
 
-        for (int x = 0; x < m_gridX; ++x)
+        for (int x = 0; x < gridX; ++x)
         {
-
-            for (int y = 0; y < m_gridY; ++y)
+            for (int y = 0; y < gridY; ++y)
             {
                 //create array
                 Vector3[] temp = new Vector3[7];
@@ -63,75 +90,75 @@ public class Hexagon
 
             }
         }
+
+        hexagonCorners = grid;
+
+        foreach (var item in grid)
+        {
+            centralPoints.Add(item.First());
+        }
         return grid;
     }
 
-    public List<Vector3[]> GetNeighboursPositions(List<Vector3[]> target, int mapsize, int gridX)
+    public List<Vector3[]> SetNeighboursPositions(int mapsize, int gridX)
     {
-        int m_gridX = gridX;
-        int m_gridY = (int)(mapsize / (Mathf.Sqrt(3) * r));
-
-        if (m_gridX % 2 != 0) m_gridX += 1;
-        if (m_gridY % 2 != 0) m_gridY -= 1;
 
         int k = 0;
         List<Vector3[]> r_arr = new();
         //all neighbour positions vector3's same order as the construct grid one
-        for (int x = 0; x < m_gridX; ++x)
+        for (int x = 0; x < gridX; ++x)
         {
-            for (int y = 0; y < m_gridY; ++y)
+            for (int y = 0; y < gridY; ++y)
             {
                 //the 4 corner stones special cases
                 //first
                 if (x == 0 & y == 0)
                 {
-                    Vector3[] temp = { target.ElementAt(k + 1)[0], target.ElementAt(k + m_gridY)[0] };
+                    Vector3[] temp = { hexagonCorners.ElementAt(k + 1)[0], hexagonCorners.ElementAt(k + gridY)[0] };
                     r_arr.Add(temp);
                 }
                 //last
-                else if (x == m_gridX - 1 && y == m_gridY - 1)
+                else if (x == gridX - 1 && y == gridY - 1)
                 {
-                    Vector3[] temp = { target.ElementAt(k - 1)[0], target.ElementAt(k - m_gridY)[0] };
+                    Vector3[] temp = { hexagonCorners.ElementAt(k - 1)[0], hexagonCorners.ElementAt(k - gridY)[0] };
                     r_arr.Add(temp);
                 }
                 //bot left
-                else if (x == 0 && y == m_gridY - 1)
+                else if (x == 0 && y == gridY - 1)
                 {
-                    Vector3[] temp = { target.ElementAt(k - 1)[0], target.ElementAt(k + m_gridY - 1)[0], target.ElementAt(k + m_gridY)[0] };
+                    Vector3[] temp = { hexagonCorners.ElementAt(k - 1)[0], hexagonCorners.ElementAt(k + gridY - 1)[0], hexagonCorners.ElementAt(k + gridY)[0] };
                     r_arr.Add(temp);
                 }
                 //top right
-                else if (x == m_gridX - 1 && y == 0)
+                else if (x == gridX - 1 && y == 0)
                 {
-                    Vector3[] temp = { target.ElementAt(k + 1)[0], target.ElementAt(k - m_gridY + 1)[0], target.ElementAt(k - m_gridY)[0] };
+                    Vector3[] temp = { hexagonCorners.ElementAt(k + 1)[0], hexagonCorners.ElementAt(k - gridY + 1)[0], hexagonCorners.ElementAt(k - gridY)[0] };
                     r_arr.Add(temp);
                 }
                 //case 7: every stone not on the outer rows/columns
-                else if (x != 0 && y != 0 && x != m_gridX - 1 && y != m_gridY - 1)
+                else if (x != 0 && y != 0 && x != gridX - 1 && y != gridY - 1)
                 {
                     Vector3[] temp =
                     {
-                    target.ElementAt(k - m_gridY)[0],
-                    target.ElementAt(k - m_gridY+1)[0],
-                    target.ElementAt(k - 1)[0],
-                    target.ElementAt(k + 1)[0],
-                    target.ElementAt(k + m_gridY)[0],
-                    target.ElementAt(k + m_gridY+ 1)[0],
-
-
+                    hexagonCorners.ElementAt(k - gridY)[0],
+                    hexagonCorners.ElementAt(k - gridY+1)[0],
+                    hexagonCorners.ElementAt(k - 1)[0],
+                    hexagonCorners.ElementAt(k + 1)[0],
+                    hexagonCorners.ElementAt(k + gridY)[0],
+                    hexagonCorners.ElementAt(k + gridY+ 1)[0],
                     };
                     r_arr.Add(temp);
                 }
                 //case6: last row every second -1
-                else if (x % 2 == 0 && y == m_gridY - 1)
+                else if (x % 2 == 0 && y == gridY - 1)
                 {
                     Vector3[] temp =
                     {
-                    target.ElementAt(k - m_gridY - 1)[0],
-                    target.ElementAt(k - m_gridY)[0],
-                    target.ElementAt(k - 1)[0],
-                    target.ElementAt(k + m_gridY - 1)[0],
-                    target.ElementAt(k + 1)[0]
+                    hexagonCorners.ElementAt(k - gridY - 1)[0],
+                    hexagonCorners.ElementAt(k - gridY)[0],
+                    hexagonCorners.ElementAt(k - 1)[0],
+                    hexagonCorners.ElementAt(k + gridY - 1)[0],
+                    hexagonCorners.ElementAt(k + 1)[0]
                     };
                     r_arr.Add(temp);
                 }
@@ -141,21 +168,21 @@ public class Hexagon
 
                     Vector3[] temp =
                     {
-                    target.ElementAt(k - m_gridY)[0],
-                    target.ElementAt(k + 1)[0],
-                    target.ElementAt(k +m_gridY)[0],
+                    hexagonCorners.ElementAt(k - gridY)[0],
+                    hexagonCorners.ElementAt(k + 1)[0],
+                    hexagonCorners.ElementAt(k +gridY)[0],
 
                     };
                     r_arr.Add(temp);
                 }
                 //case 3: every second in last row
-                else if (x % 2 != 0 && y == m_gridY - 1)
+                else if (x % 2 != 0 && y == gridY - 1)
                 {
                     Vector3[] temp =
                     {
-                    target.ElementAt(k - m_gridY)[0],
-                    target.ElementAt(k - 1)[0],
-                    target.ElementAt(k + m_gridY)[0],
+                    hexagonCorners.ElementAt(k - gridY)[0],
+                    hexagonCorners.ElementAt(k - 1)[0],
+                    hexagonCorners.ElementAt(k + gridY)[0],
 
                     };
                     r_arr.Add(temp);
@@ -165,11 +192,11 @@ public class Hexagon
                 {
                     Vector3[] temp =
                     {
-                    target.ElementAt(k - m_gridY)[0],
-                    target.ElementAt(k - m_gridY+1)[0],
-                    target.ElementAt(k + 1)[0],
-                    target.ElementAt(k + m_gridY)[0],
-                    target.ElementAt(k + m_gridY+ 1)[0],
+                    hexagonCorners.ElementAt(k - gridY)[0],
+                    hexagonCorners.ElementAt(k - gridY+1)[0],
+                    hexagonCorners.ElementAt(k + 1)[0],
+                    hexagonCorners.ElementAt(k + gridY)[0],
+                    hexagonCorners.ElementAt(k + gridY+ 1)[0],
                     };
                     r_arr.Add(temp);
                 }
@@ -178,115 +205,37 @@ public class Hexagon
                 {
                     Vector3[] temp =
                     {
-                    target.ElementAt(k - 1)[0],
-                    target.ElementAt(k + 1)[0],
-                    target.ElementAt(k + m_gridY)[0],
-                    target.ElementAt(k + m_gridY- 1)[0],
+                    hexagonCorners.ElementAt(k - 1)[0],
+                    hexagonCorners.ElementAt(k + 1)[0],
+                    hexagonCorners.ElementAt(k + gridY)[0],
+                    hexagonCorners.ElementAt(k + gridY- 1)[0],
                     };
                     r_arr.Add(temp);
                 }
                 //case ?: every stone i last column
-                else if (x == m_gridX - 1)
+                else if (x == gridX - 1)
                 {
                     Vector3[] temp =
                     {
-                    target.ElementAt(k - 1)[0],
-                    target.ElementAt(k + 1)[0],
-                    target.ElementAt(k - m_gridY)[0],
-                    target.ElementAt(k - m_gridY + 1)[0],
+                    hexagonCorners.ElementAt(k - 1)[0],
+                    hexagonCorners.ElementAt(k + 1)[0],
+                    hexagonCorners.ElementAt(k - gridY)[0],
+                    hexagonCorners.ElementAt(k - gridY + 1)[0],
                     };
                     r_arr.Add(temp);
                 }
 
                 ++k;
             }
+        }
 
+        foreach (Vector3[] item in r_arr)
+        {
+            neighbours.Add(item.ToList());
         }
 
         return r_arr;
     }
 
-    // maybe extend Bounds with dis code?
-    public bool IsInsideOfHexagon(Vector3 point, Vector3 HexaCenterPos)
-    {
-        //tophalf
-        if ((point.y > HexaCenterPos.y) && point.y - HexaCenterPos.y < Mathf.Sqrt(3) * r / 2)
-        {
-            //somewhere in right half but not yet done
-            if ((point.x > HexaCenterPos.x) && point.x - HexaCenterPos.x > r / 2)
-            {
-                if (Vector3.Dot((GetBRF(HexaCenterPos) - GetTRF(HexaCenterPos)).normalized, (point - GetTRF(HexaCenterPos)).normalized) < .99f &&
-                    Vector3.Dot((GetBRF(HexaCenterPos) - GetTRF(HexaCenterPos)).normalized, (point - GetTRF(HexaCenterPos)).normalized) > .71f)
-                {
-                    return true;
-                }
-                else return false;
-            }
-            //left
-            else if (point.x - HexaCenterPos.x < -r / 2)
-            {
-                if (Vector3.Dot((GetBLF(HexaCenterPos) - GetTLF(HexaCenterPos)).normalized, (point - GetTLF(HexaCenterPos)).normalized) < .99f &&
-                   Vector3.Dot((GetBLF(HexaCenterPos) - GetTLF(HexaCenterPos)).normalized, (point - GetTLF(HexaCenterPos)).normalized) > .71f)
-                {
-                    return true;
-                }
-            }
-            else return false;
 
-
-        }
-        //bothalf
-        else if ((point.y < HexaCenterPos.y) && point.y - HexaCenterPos.y > -Mathf.Sqrt(3) * r / 2)
-        {
-            //right side
-            if ((point.x > HexaCenterPos.x) && point.x - HexaCenterPos.x > r / 2)
-            {
-                if (Vector3.Dot((GetTRF(HexaCenterPos) - GetBRF(HexaCenterPos)).normalized, (point - GetBRF(HexaCenterPos)).normalized) < .99f &&
-                    Vector3.Dot((GetTRF(HexaCenterPos) - GetBRF(HexaCenterPos)).normalized, (point - GetBRF(HexaCenterPos)).normalized) > .71f)
-                {
-                    return true;
-                }
-                else return false;
-            }
-            //leftside
-            else if (point.x - HexaCenterPos.x < -r / 2)
-            {
-                if (Vector3.Dot((GetTLF(HexaCenterPos) - GetBLF(HexaCenterPos)).normalized, (point - GetBLF(HexaCenterPos)).normalized) < .99f &&
-                   Vector3.Dot((GetTLF(HexaCenterPos) - GetBLF(HexaCenterPos)).normalized, (point - GetBLF(HexaCenterPos)).normalized) > .71f)
-                {
-                    return true;
-                }
-                else return false;
-
-            }
-            else return false;
-        }
-
-        return false;
-    }
-
-    private Vector3 GetTLF(Vector3 arg)
-    {
-        return arg + new Vector3(-r / 2, 0, +r / 2 * Mathf.Sqrt(3));
-    }
-    private Vector3 GetTRF(Vector3 arg)
-    {
-        return arg + new Vector3(+r / 2, 0, +r / 2 * Mathf.Sqrt(3));
-    }
-    private Vector3 GetRF(Vector3 arg)
-    {
-        return arg + new Vector3(+r, 0, 0);
-    }
-    private Vector3 GetLF(Vector3 arg)
-    {
-        return arg + new Vector3(+r / 2, 0, -r / 2 * Mathf.Sqrt(3));
-    }
-    private Vector3 GetBRF(Vector3 arg)
-    {
-        return arg + new Vector3(-r / 2, 0, -r / 2 * Mathf.Sqrt(3));
-    }
-    private Vector3 GetBLF(Vector3 arg)
-    {
-        return arg + new Vector3(-r, 0f, 0f);
-    }
 }

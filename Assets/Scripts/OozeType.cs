@@ -8,71 +8,47 @@ public class OozeType:Hexagon
     //need one more list here: oozedneighbour list aka take oozedposition[i] -> search for the same in oindex -> get neighbours of that vector in neighbourlist
     //->add that vec to oozedneighbour if it is in oozedpositions also
     private readonly List<Vector3> resetoindex;
-    private readonly List<List<Vector3>> resetoozeNeighbour_list;
-    private List<Vector3> oindex;
-    private List<List<Vector3>> oozeNeighbour_list;
-    public Dictionary<Vector3, int> iindex;
-    private static System.Random random;
+    public readonly List<List<Vector3>> resetoozeNeighbour_list;
+    
+    public Dictionary<Vector3, int> iindex = new Dictionary<Vector3, int>();
 
     //constructor
-
-    public OozeType(List<Vector3[]> ind, List<Vector3[]> neighbours)
+    public OozeType(int size, int x)
     {
-        random = new System.Random(Guid.NewGuid().GetHashCode());
-        oindex = new List<Vector3>();
-        oozeNeighbour_list = new List<List<Vector3>>();
-        //oozedPositions = new List<Vector3>();
+        ConstructGrid(size, x);
+        SetNeighboursPositions(size, x);
 
         //the new real index 
-        foreach (Vector3[] item in ind)
+        foreach (Vector3 item in centralPoints)
         {
-            iindex.Add(item.First(), default);
+            iindex.Add(item, default);
         }
 
-        //radius
-        Vector3 point = new Vector3();
-        point = ind.ElementAt(0)[0] - ind.ElementAt(0)[1];
-        r = point.magnitude;
-
-        //oindex still used for checking 
-        for (int i = 0; i < ind.Count; ++i)
-        {
-            oindex.Add(ind[i].First());
-        }
-
-        for (int i = 0; i < iindex.Count; ++i)
-        {
-            foreach (Vector3[] e in neighbours)
-            {
-
-                oozeNeighbour_list.Add(e.ToList());
-
-            }
-        }
-
-        resetoindex = oindex;
-        resetoozeNeighbour_list = oozeNeighbour_list;
+        resetoindex = centralPoints;
+        resetoozeNeighbour_list = neighbours;
 
     }
 
+
     public OozeType OozeProcess(int biomIndex)
     {
-        var shuffledList = this.oindex.OrderBy(_ => Guid.NewGuid()).ToList();
-        Vector3 sample = shuffledList[random.Next(0, this.oindex.Count)];
+        System.Random random = new System.Random(Guid.NewGuid().GetHashCode());
+        Vector3 sample = new Vector3();
+        var shuffledList = this.centralPoints.OrderBy(_ => Guid.NewGuid()).ToList();
+        sample = shuffledList[random.Next(0, this.centralPoints.Count)];
 
-
-        NextRoundOfNeighbours(sample);
         
         this.CalculateChance(9, NextRoundOfNeighbours(sample), biomIndex);
 
-        oindex = resetoindex;
-        oozeNeighbour_list = resetoozeNeighbour_list;
+        centralPoints = resetoindex;
+        neighbours = resetoozeNeighbour_list;
 
         return this;
     }
 
     private void CalculateChance(int chance, List<Vector3> arg, int biomIndex)
     {
+        System.Random random = new System.Random(Guid.NewGuid().GetHashCode());
 
         if (arg.Count <= 0) return;
         for (int i = 0; i < arg.Count; ++i)
@@ -80,27 +56,11 @@ public class OozeType:Hexagon
             if (random.Next(0, chance) < 7 - i) //if success
             {
                 iindex[arg[i]] = biomIndex;//add the position to the return list
-                CalculateChance(chance += 2, NextRoundOfNeighbours(arg[i]),biomIndex);
+                CalculateChance(chance += 3, NextRoundOfNeighbours(arg[i]),biomIndex);
             }
         }
         return;
     }
-
-    //public void RemoveOoze(Vector3 target)
-    //{
-    //    this.oozedPositions.Remove(target);
-    //}
-
-    //public List<Vector3> GetOozedPositions()
-    //{
-
-    //    return this.oozedPositions;
-    //}
-
-    //public void SetOozePositions(List<Vector3> x)
-    //{
-    //    this.oozedPositions = x;
-    //}
 
     private List<Vector3> NextRoundOfNeighbours(Vector3 target)
     {
@@ -109,11 +69,11 @@ public class OozeType:Hexagon
 
         List<Vector3> result = new();
 
-        for (int i = 0; i < this.oindex.Count; ++i)
+        for (int i = 0; i < this.centralPoints.Count; ++i)
         {
-            if (this.oindex[i] == (target))
+            if (this.centralPoints[i] == (target))
             {
-                result = this.oozeNeighbour_list[i];
+                result = this.neighbours[i];
                 break;
             }
         }
@@ -123,7 +83,7 @@ public class OozeType:Hexagon
 
     private void RemoveitFromPossibleOutcomes(Vector3 v)
     {
-        foreach (var item in oozeNeighbour_list)
+        foreach (var item in neighbours)
         {
             if (item.Contains(v))
                 item.Remove(v);

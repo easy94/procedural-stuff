@@ -61,25 +61,6 @@ public static class GenerateMesh
             }
         }
         
-        //if(verticesInTotal > 150000)//150'000 is total on single mesh
-        //{
-        //    GameObject terrainChild = GameObject.CreatePrimitive(PrimitiveType.Plane);
-        //    Mesh meshChild = new Mesh();
-
-        //    int currentLine = 0;
-        //    int endOfLine = vertexPerLine;
-        //    int startOfLine = 0 + (vertexPerLine * currentLine);
-        //    for (int x = 0; x < vertexPerLine/2; x++)
-        //    {
-        //        for (int y = 0; y < vertexPerLine/2; y++)
-        //        {
-                    
-
-        //        }
-        //    }
-
-        //    terrainChild.transform.SetParent(terrainObject.transform);
-        //}
 
         //remove
         terrainObject.GetComponent<MeshCollider>().sharedMesh.Clear();
