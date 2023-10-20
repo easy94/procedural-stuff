@@ -9,7 +9,7 @@ public class GenerateMap : MonoBehaviour
     public LevelData levelData;
 
     [SerializeField] MeshCollider meshCollider;
-    //DrawNoiseTexture noiseTexture;
+    DrawNoiseTexture noiseTexture;
 
     [Range(1, 10)]
     [SerializeField] int MapSizeMultiplier;
@@ -40,11 +40,11 @@ public class GenerateMap : MonoBehaviour
         for (int i = meshCollider.transform.childCount; i > 0; --i)
             DestroyImmediate(meshCollider.transform.GetChild(0).gameObject);
 
-        //noiseTexture = FindObjectOfType<DrawNoiseTexture>();
+        noiseTexture = FindObjectOfType<DrawNoiseTexture>();
 
         mapData.NoiseValueData = GenerateNoiseMap();
         mapData.MeshData = GenerateMesh.UpdateMesh(mapData.NoiseValueData, levelData.heightmultiplier, levelData.curve, levelData.LevelOfDetail, meshCollider);
-        mapData.ColorData = GenerateVertexColor.PaintVerts(mapData.MeshData, levelData.gradient);
+       // mapData.ColorData = GenerateVertexColor.PaintVerts(mapData.MeshData, levelData.gradient);
 
         //meshCollider.GetComponent<MeshFilter>().sharedMesh.colors = mapData.ColorData;
     }
@@ -61,6 +61,13 @@ public class GenerateMap : MonoBehaviour
         //int of dict-1 equals type of biom aka biom +1 == dict index
 
         Ooze = (GenerateBiomes.GenerateRndmBiomes(MapWidth, HexGridX, Biomes.Length));
+
+        for (int i = 0; i < Biomes.Length; i++)
+        {
+            Biomes[i].assetPlacementTexture = noiseTexture.DrawTexture(Ooze.iindex)
+
+        }
+
         PlaceAsset();
 
     }
@@ -85,9 +92,6 @@ public class GenerateMap : MonoBehaviour
                 Instantiate(Biomes[i].assets[random.Next(0, Biomes[i].assets.Length)], item, Quaternion.AngleAxis(random.Next(-45, 45), Vector3.up), meshCollider.transform);
             }
         }
-
-        drawing = GameObject.Find("Player").GetComponent<GizmosDrawing>();
-        drawing.GetReference(Ooze.neighbours[11]);
 
     }
 
@@ -129,6 +133,7 @@ public struct Biomes
 {
     public string name;
     public GameObject[] assets;
+    public Texture2D assetPlacementTexture;
 }
 
 enum Biome

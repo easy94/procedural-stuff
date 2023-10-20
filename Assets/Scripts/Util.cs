@@ -6,6 +6,7 @@ public static class Util
 {
 
     //not working
+
     public static bool IsInsideOfHexagon(Vector3 point, Vector3 HexaCenterPos, float r)
     {
         //tophalf
@@ -31,7 +32,6 @@ public static class Util
                 }
             }
             else return false;
-
 
         }
         //bothalf
@@ -72,21 +72,13 @@ public static class Util
         {
             return HexaCenterPos + new Vector3(+r / 2, 0, +r / 2 * Mathf.Sqrt(3));
         }
-        //Vector3 GetRF()
-        //{
-        //    return HexaCenterPos + new Vector3(+r, 0, 0);
-        //}
-        //Vector3 GetLF()
-        //{
-        //    return HexaCenterPos + new Vector3(+r / 2, 0, -r / 2 * Mathf.Sqrt(3));
-        //}
         Vector3 GetBRF()
         {
-            return HexaCenterPos + new Vector3(-r / 2, 0, -r / 2 * Mathf.Sqrt(3));
+            return HexaCenterPos + new Vector3(r / 2, 0, -r / 2 * Mathf.Sqrt(3));
         }
         Vector3 GetBLF()
         {
-            return HexaCenterPos + new Vector3(-r, 0f, 0f);
+            return HexaCenterPos + new Vector3(-r / 2, 0f, -r / 2 * Mathf.Sqrt(3));
         }
 
     }
