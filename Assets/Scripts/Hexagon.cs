@@ -1,9 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection.Emit;
+using Unity.VisualScripting;
 using UnityEngine;
 
-public interface IGrid
+public abstract class Grid
 {
     public int gridX { get; set; }
     public int gridY { get; set; }
@@ -11,19 +13,14 @@ public interface IGrid
     public int size { get; set; }
 
 
-    public List<Vector3[]> ConstructGrid(int amountOfCols, int amountOfRows);
-    public List<Vector3[]> SetNeighboursPositions(int mapsize, int gridX);
+    public abstract List<Vector3[]> ConstructGrid(int amountOfCols, int amountOfRows);
+    public abstract List<Vector3[]> SetNeighboursPositions(int mapsize, int gridX);
 
 }
 
-public class Hexagon : IGrid
+public class Hexagon : Grid
 {
     protected float r;
-    public float rad { get => r; set => r = value; }
-
-    public int size { get; set; }
-    public int gridX { get; set; }
-    public int gridY { get; set; }
 
 
     public List<Vector3> centralPoints;
@@ -31,8 +28,7 @@ public class Hexagon : IGrid
     public List<List<Vector3>> neighbours;
 
 
-
-    public List<Vector3[]> ConstructGrid(int sizeM, int amountOfRows)
+    public override List<Vector3[]> ConstructGrid(int sizeM, int amountOfRows)
     {
         neighbours = new();
         hexagonCorners = new();
@@ -100,7 +96,7 @@ public class Hexagon : IGrid
         return grid;
     }
 
-    public List<Vector3[]> SetNeighboursPositions(int mapsize, int gridX)
+    public override List<Vector3[]> SetNeighboursPositions(int mapsize, int gridX)
     {
 
         int k = 0;
@@ -237,5 +233,168 @@ public class Hexagon : IGrid
         return r_arr;
     }
 
+    public bool IsInsideOfHexagon(Vector3 point, Vector3 HexaCenterPos, float r)
+    {
+        //tophalf
+        if ((point.z > HexaCenterPos.z) && point.z - HexaCenterPos.z < Mathf.Sqrt(3) * r / 2)
+        {
+            //somewhere in right half but not yet done
+            if ((point.x > HexaCenterPos.x) && point.x - HexaCenterPos.x < r / 2)
+            {
+                if (Vector3.Dot((GetBRF() - GetTRF()).normalized, (point - GetTRF()).normalized) < .99f &&
+                    Vector3.Dot((GetBRF() - GetTRF()).normalized, (point - GetTRF()).normalized) > .71f)
+                {
+                    return true;
+                }
+                else return false;
+            }
+            //left
+            else if (point.x - HexaCenterPos.x > -r / 2)
+            {
+                if (Vector3.Dot((GetBLF() - GetTLF()).normalized, (point - GetTLF()).normalized) < .99f &&
+                   Vector3.Dot(GetBLF() - GetTLF().normalized, (point - GetTLF()).normalized) > .71f)
+                {
+                    return true;
+                }
+            }
+            else return false;
 
+        }
+        //bothalf
+        else if ((point.z < HexaCenterPos.z) && point.z - HexaCenterPos.z > -Mathf.Sqrt(3) * r / 2)
+        {
+            //right side
+            if ((point.x > HexaCenterPos.x) && point.x - HexaCenterPos.x > r / 2)
+            {
+                if (Vector3.Dot((GetTRF() - GetBRF()).normalized, (point - GetBRF()).normalized) < .99f &&
+                    Vector3.Dot((GetTRF() - GetBRF()).normalized, (point - GetBRF()).normalized) > .71f)
+                {
+                    return true;
+                }
+                else return false;
+            }
+            //leftside
+            else if (point.x - HexaCenterPos.x < -r / 2)
+            {
+                if (Vector3.Dot((GetTLF() - GetBLF()).normalized, (point - GetBLF()).normalized) < .99f &&
+                    Vector3.Dot(GetTLF() - GetBLF().normalized, (point - GetBLF()).normalized) > .71f)
+                {
+                    return true;
+                }
+                else return false;
+
+            }
+            else return false;
+        }
+
+        return false;
+
+
+        Vector3 GetTLF()
+        {
+            return HexaCenterPos + new Vector3(-r / 2, 0, +r / 2 * Mathf.Sqrt(3));
+        }
+        Vector3 GetTRF()
+        {
+            return HexaCenterPos + new Vector3(+r / 2, 0, +r / 2 * Mathf.Sqrt(3));
+        }
+        Vector3 GetBRF()
+        {
+            return HexaCenterPos + new Vector3(r / 2, 0, -r / 2 * Mathf.Sqrt(3));
+        }
+        Vector3 GetBLF()
+        {
+            return HexaCenterPos + new Vector3(-r / 2, 0f, -r / 2 * Mathf.Sqrt(3));
+        }
+
+    }
+
+    public GameObject ConstructHexagonPlane(int r)
+    {
+        
+        float m_hexagonHeight = Mathf.Sqrt(3) * r;
+        float m_hexagonWidth = r * 2;
+        
+        Mesh myMesh = new Mesh();
+
+        Vector3[] vertices = new Vector3[r * r];
+
+        for (int x = 0; x < r; x++)
+        {
+
+        }
+
+        Vector3[] verts = {
+            new Vector3(-r / 2 , 100, +r / 2 * Mathf.Sqrt(3)), //TL
+            new Vector3(+r / 2 , 100, +r / 2 * Mathf.Sqrt(3)), //TR
+            new Vector3(+r ,     100, 0),                    //R
+            new Vector3(+r / 2 , 100, -r / 2 * Mathf.Sqrt(3)), //BR
+            new Vector3(-r / 2 , 100, -r / 2 * Mathf.Sqrt(3)), //BL
+            new Vector3(-r,     100, 0),                      //L
+            new Vector3(0 ,      100, 0) };                  //C
+
+        int[] tris = new int[(verts.Length - 1) * 3];
+        Vector2[] uvs = new Vector2[verts.Length];
+
+        int i = 0;
+        for (int x = 0; x < (verts.Length - 1); x++)
+        {
+            tris[i] = x;
+
+            if (x % 5 == 0 && x!=0)
+                tris[i + 1] = x - 5;
+            else
+                tris[i + 1] = x + 1;
+
+            tris[i + 2] = 6;
+            i += 3;
+        }
+
+        int k = 0;
+        for (int j = 1; j <= verts.Length / 7; j++)
+        {
+            uvs[k].x = 0;
+            uvs[k].y = 1;
+
+            uvs[k + 1].x = .5f;
+            uvs[k + 1].y = 1;
+
+            uvs[k + 2].x = 1;
+            uvs[k + 2].y = 0.5f;
+
+            uvs[k + 3].x = 1;
+            uvs[k + 3].y = 0;
+
+            uvs[k + 4].x = .5f;
+            uvs[k + 4].y = 0;
+
+            uvs[k + 5].x = 0;
+            uvs[k + 5].y = 0;
+
+            uvs[k + 6].x = 0.5f;
+            uvs[k + 6].y = 0.5f;
+
+            k += 7;
+        }
+
+        GameObject objectt = GameObject.CreatePrimitive(PrimitiveType.Plane);
+        myMesh.vertices = verts;
+        myMesh.triangles = tris;
+        myMesh.uv = uvs;
+        myMesh.RecalculateBounds();
+        myMesh.RecalculateNormals();
+        objectt.GetComponent<MeshFilter>().mesh = myMesh;
+        objectt.GetComponent<MeshCollider>().sharedMesh = myMesh;
+        myMesh.name = "wtf";
+        
+        return objectt;
+    }
+    public float GetRadius()
+    {
+        return r;
+    }
+    public float GetHeight()
+    {
+        return r * Mathf.Sqrt(3);
+    }
 }

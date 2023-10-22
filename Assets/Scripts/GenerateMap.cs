@@ -6,23 +6,24 @@ using UnityEngine;
 public class GenerateMap : MonoBehaviour
 {
     private static System.Random random;
-    public LevelData levelData;
 
-    [SerializeField] MeshCollider meshCollider;
+    public LevelData levelData;
+    public BiomeData biomeData;
+    [SerializeField] MeshCollider meshColliderTerrain;
+    [SerializeField] MeshCollider meshColliderBiome;
+
     DrawNoiseTexture noiseTexture;
 
     [Range(1, 10)]
     [SerializeField] int MapSizeMultiplier;
-    public static int MapWidth = 961;
+
+    private int MapWidth = 961;
 
     MapData mapData = new MapData();
 
     GizmosDrawing drawing;
 
     public Biomes[] Biomes;
-
-    [Range(1, 6)]
-    public int assetDensity;
 
     [Range(6, 50)]
     [SerializeField] int HexGridX;
@@ -36,17 +37,16 @@ public class GenerateMap : MonoBehaviour
 
     public void DrawMapData()
     {
+        random = new(Guid.NewGuid().GetHashCode());
         // before generating destroy childobjects
-        for (int i = meshCollider.transform.childCount; i > 0; --i)
-            DestroyImmediate(meshCollider.transform.GetChild(0).gameObject);
+        for (int i = meshColliderTerrain.transform.childCount; i > 0; --i)
+            DestroyImmediate(meshColliderTerrain.transform.GetChild(0).gameObject);
 
         noiseTexture = FindObjectOfType<DrawNoiseTexture>();
 
         mapData.NoiseValueData = GenerateNoiseMap();
-        mapData.MeshData = GenerateMesh.UpdateMesh(mapData.NoiseValueData, levelData.heightmultiplier, levelData.curve, levelData.LevelOfDetail, meshCollider);
-       // mapData.ColorData = GenerateVertexColor.PaintVerts(mapData.MeshData, levelData.gradient);
+        mapData.MeshData = GenerateMesh.UpdateMesh(mapData.NoiseValueData, levelData.LevelOfDetail, meshColliderTerrain, levelData.heightmultiplier, levelData.curve);
 
-        //meshCollider.GetComponent<MeshFilter>().sharedMesh.colors = mapData.ColorData;
     }
 
     public float[,] GenerateNoiseMap()
@@ -59,45 +59,77 @@ public class GenerateMap : MonoBehaviour
     public void MakeBiomes()
     {
         //int of dict-1 equals type of biom aka biom +1 == dict index
-
         Ooze = (GenerateBiomes.GenerateRndmBiomes(MapWidth, HexGridX, Biomes.Length));
 
-        for (int i = 0; i < Biomes.Length; i++)
-        {
-            Biomes[i].assetPlacementTexture = noiseTexture.DrawTexture(Ooze.iindex)
+        GenerateBiomeNoise();
 
-        }
+        mapData.BiomeMeshData = GenerateMesh.UpdateMesh(mapData.BiomeNoise, 0, meshColliderBiome, 1, biomeData.curve);
 
         PlaceAsset();
-
     }
 
+    public void GenerateBiomeNoise(float x = 0, float y = 0)
+    {
+        mapData.BiomeNoise = GenerateNoise.Generate(Mathf.RoundToInt(Ooze.GetRadius() * 2), biomeData.scale, biomeData.octaves, biomeData.frequency, biomeData.amplitude, random.Next(), biomeData.offsetX + x, biomeData.offsetY + y);
+    }
 
     //improveable**************
     public void PlaceAsset()
     {
-        random = new(Guid.NewGuid().GetHashCode());
 
         //make one array for each biome type
 
         List<List<Vector3>> temp_list = new List<List<Vector3>>();
 
-        temp_list = GeneratePositionsForAssets(temp_list);
+        List<Vector3> asset_positions = new List<Vector3>();
 
-        //finally place assets here
-        for (int i = 0; i < Biomes.Length; i++)
+        int sizeX = mapData.BiomeNoise.GetLength(0);
+
+        //temp_list is the positions the plane goes to. need for loop that loops through noise value arr and places at mesh vert position if val is >0.5
+        temp_list = SortBiomeList(temp_list);
+
+
+        //this algorith generates vertices to spawn objects on and sends them to the terrain position after checking noise val and steepness
+        GameObject biomeStencil = GameObject.Find("BiomeStencil");
+        Vector3 offset = new(Ooze.GetRadius(), 0, Ooze.GetHeight());
+        for (int i = 0; i < temp_list.Count; i++)
         {
-            foreach (var item in temp_list[i])
+            foreach (Vector3 item in temp_list[i])
             {
-                Instantiate(Biomes[i].assets[random.Next(0, Biomes[i].assets.Length)], item, Quaternion.AngleAxis(random.Next(-45, 45), Vector3.up), meshCollider.transform);
+                biomeStencil.transform.position = item - offset;
+
+                GenerateBiomeNoise();
+
+                for (int x = 0; x < sizeX; x++)
+                {
+                    for (int y = 0; y < sizeX; y++)
+                    {
+                        if (mapData.BiomeNoise[x, y] > biomeData.spawnNoiseThreshhold && y % biomeData.skipVerts == 0)
+                        {
+                            //the positions that assets be placed on on the stencil
+                            asset_positions.Add(mapData.BiomeMeshData[x * sizeX + y] + biomeStencil.transform.position);
+                        }
+                    }
+                }
+                Vector3 position = new();
+                foreach (var v in asset_positions)
+                {
+                    //send the positions on the terrain before spawning
+                    position = PlaceAssets.CastRayOnTerrain(v);
+                    if (position != default)
+                        Instantiate(Biomes[i].assets[random.Next(0, Biomes[i].assets.Length)], v, Quaternion.AngleAxis(random.Next(-45, 45), Vector3.up), meshColliderTerrain.transform);
+                }
+
+                asset_positions.Clear();
             }
+
         }
 
     }
 
-    private List<List<Vector3>> GeneratePositionsForAssets(List<List<Vector3>> arg)
+    private List<List<Vector3>> SortBiomeList(List<List<Vector3>> arg)
     {
-
+        //necessary
         for (int i = 0; i < Biomes.Length; i++)
             arg.Add(new List<Vector3>());
 
@@ -105,17 +137,21 @@ public class GenerateMap : MonoBehaviour
         {
             if (Ooze.iindex.ElementAt(i).Value == 1)
             {
-                arg[0] = arg[0].Concat(PlaceAssets.CastRayOnTerrain(Ooze.iindex.Keys.ElementAt(i), assetDensity, Ooze.rad)).ToList();
+                arg[0].Add(Ooze.iindex.Keys.ElementAt(i));
+
             }
             else if (Ooze.iindex.ElementAt(i).Value == 2)
             {
-                arg[1] = arg[1].Concat(PlaceAssets.CastRayOnTerrain(Ooze.iindex.Keys.ElementAt(i), assetDensity, Ooze.rad)).ToList();
+                arg[1].Add(Ooze.iindex.Keys.ElementAt(i));
+
             }
             else if (Ooze.iindex.ElementAt(i).Value == 3)
             {
 
+
             }
         }
+
         return arg;
     }
 
@@ -125,7 +161,9 @@ public struct MapData
 {
     public float[,] NoiseValueData;
     public Vector3[] MeshData;
-    public Color[] ColorData;
+
+    public float[,] BiomeNoise;
+    public Vector3[] BiomeMeshData;
 }
 
 [System.Serializable]
@@ -133,10 +171,10 @@ public struct Biomes
 {
     public string name;
     public GameObject[] assets;
-    public Texture2D assetPlacementTexture;
+    public Biome Type;
 }
 
-enum Biome
+public enum Biome
 {
     Forest,
     Plain,

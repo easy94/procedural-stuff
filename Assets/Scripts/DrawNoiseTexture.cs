@@ -1,10 +1,11 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Windows;
 
 public class DrawNoiseTexture : MonoBehaviour
 {
 
-    public Color[] DrawTexture(float[,] noiseMap)
+    public void DrawTexture(float[,] noiseMap, GameObject target)
     {
         int textureWidth = noiseMap.GetLength(0);
         int textureHeight = noiseMap.GetLength(1);
@@ -17,32 +18,12 @@ public class DrawNoiseTexture : MonoBehaviour
                 colorMap[x * textureHeight + y] = Color.Lerp(Color.black, Color.white, noiseMap[x, y]);
             }
         }
-       
-        transform.localScale = new Vector3(textureHeight, 1, textureWidth);
 
-        return colorMap;
+        Texture2D texture = new(textureWidth, textureHeight);
+        texture.filterMode = FilterMode.Point;
+        texture.SetPixels(colorMap);
+        texture.Apply();
+        target.GetComponent<Renderer>().sharedMaterial.mainTexture = texture;
+
     }
-
-
-    public Texture2D DrawTexture(float[,] noiseMap, OozeType ooze)
-    {
-        int textureWidth = noiseMap.GetLength(0);
-        int textureHeight = noiseMap.GetLength(1);
-
-        Texture2D texture = new(textureWidth,textureHeight);
-
-        Color[] colorMap = new Color[textureWidth*textureHeight];
-
-        for (int x = 0; x < textureWidth; x++)
-        {
-            for (int y = 0; y < textureHeight; y++)
-            {
-                colorMap[x * textureHeight + y] = Color.Lerp(Color.black, Color.white, noiseMap[x, y]);
-            }
-        }
-
-
-        return texture;
-    }
-
 }

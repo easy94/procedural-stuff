@@ -1,17 +1,18 @@
 using UnityEngine;
 
+[ExecuteInEditMode]
 public class CheckBeforeSpawning : MonoBehaviour
 {
-    [ExecuteInEditMode]
-    private void OnValidate()
+    private void Start()
     {
-        if (Physics.OverlapSphere(transform.position, 2) is Collider[] s)
+        if (Physics.OverlapSphere(transform.position, 4) is Collider[] s)
         {
-            if(s.Length > 0)
+            if(s.Length > 1)
             {
                 DestroyImmediate(gameObject);
             }
         }
+        
     }
     
 }

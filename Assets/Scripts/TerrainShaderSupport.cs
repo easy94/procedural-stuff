@@ -21,8 +21,6 @@ public class TerrainShaderSupport : MonoBehaviour
         int maxYId = shader.GetPropertyNameId(1);
         myRenderer.sharedMaterial.SetFloat(minYId, GenerateMesh.minMeshHeight);
         myRenderer.sharedMaterial.SetFloat(maxYId, GenerateMesh.maxMeshHeight);
-        Debug.Log(myRenderer.sharedMaterial.GetFloat(maxYId));
-        Debug.Log(GenerateMesh.minMeshHeight);
     }
     
 }

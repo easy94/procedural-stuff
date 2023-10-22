@@ -22,7 +22,6 @@ public class MapGenEditor : Editor          //inherit from editor cause editorsc
             mapgen.DrawMapData();
         }
 
-
         if(GUILayout.Button("Generate Bioms"))
         {
             mapgen.MakeBiomes();

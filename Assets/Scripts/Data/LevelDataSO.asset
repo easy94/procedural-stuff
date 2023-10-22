@@ -45,9 +45,9 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  Scale: 105
-  offSetX: 85
-  offSetY: 59
+  Scale: 90
+  offSetX: 292
+  offSetY: 267
   LevelOfDetail: 2
   octaves: 3
   freq: 1.8

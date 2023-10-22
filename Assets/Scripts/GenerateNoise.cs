@@ -6,9 +6,10 @@ using UnityEngine;
 public static class GenerateNoise       // static class cause only need one instance of this class
 {
 
-    public static float[,] Generate(int size, float scale, int octaves, float freq, float amp, int seed, int offSetX, int offSetY) // static needs to be cause class static
+    public static float[,] Generate(int size, float scale, int octaves, float freq, float amp, int seed, float offSetX, float offSetY) // static needs to be cause class static
     {
         int sizeAfterMulti = size;
+
 
         Vector2[] offsetArr = new Vector2[octaves];
         System.Random random = new System.Random(seed);
@@ -55,7 +56,8 @@ public static class GenerateNoise       // static class cause only need one inst
                 else if (noiseHeight < minNoiseHeight)
                     minNoiseHeight = noiseHeight;
 
-                noiseMap[y, x] = noiseHeight;
+                noiseMap[x,y] = noiseHeight;
+
             }
         }
         for (int x = 0; x < sizeAfterMulti; x++)
@@ -65,6 +67,7 @@ public static class GenerateNoise       // static class cause only need one inst
                 noiseMap[x, y] = Mathf.InverseLerp(minNoiseHeight, maxNoiseHeight, noiseMap[x, y]);
             }
         }
+
         return noiseMap;
     }
 }
