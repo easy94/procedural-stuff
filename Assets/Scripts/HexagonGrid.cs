@@ -2,50 +2,32 @@
 using System.Linq;
 using UnityEngine;
 
-public abstract class Grid
-{
-    //properties
-    public int GridX { get; set; }
-    public int GridY { get; set; }
-    //how big are the grid fields
-    public int Size { get; set; }
-
-    //methods
-    public abstract List<Vector3[]> ConstructGrid(int amountOfCols, int amountOfRows, Vector3 startPos);
-    public abstract void SetNeighboursPositions();
-
-}
-
 public class HexagonGrid : Grid
 {
-    public float r;
-    //public List<Vector3> centralPoints;
+    public float R { get; set; }
+    public List<MyHexagon> GridList { get; set; }
+
     protected List<Vector3[]> hexagonCorners;
     public List<List<MyHexagon>> neighbours;
 
-    public List<MyHexagon> GridList { get; set; }
 
-
-    public override List<Vector3[]> ConstructGrid(int sizeM, int amountOfRows, Vector3 startPos)
+    public override void ConstructGrid(int sizeM, int amountOfRows, Vector3 startPos)
     {
 
         neighbours = new();
         hexagonCorners = new();
-        //centralPoints = new();
-        //define general size of the single hexagon
 
         Size = sizeM;
-        r = (int)(Size / amountOfRows / 1.5f);
-        GridX = (int)(Size / (r * 1.5));
-        GridY = (int)(Size / (Mathf.Sqrt(3) * r));
+        R = (int)(Size / amountOfRows / 1.5f);
+        GridX = (int)(Size / (R * 1.5));
+        GridY = (int)(Size / (Mathf.Sqrt(3) * R));
 
-        float h = Mathf.Sqrt(3) * r;
-        float w = r * 2;
+        float h = Mathf.Sqrt(3) * R;
+        float w = R * 2;
 
         if (GridX % 2 != 0) GridX += 1;
         if (GridY % 2 != 0) GridY += 1;
-        //////////////////////////////////////////////
-        ///
+
         GridList = new();
         int j = 0;
         for (int x = 0; x < GridX; x++)
@@ -54,61 +36,17 @@ public class HexagonGrid : Grid
             {
                 if (j % 2 == 0)
                 {
-                    GridList.Add(new MyHexagon(r, startPos + new Vector3(x * w * .75f, 0, y * h), j));
+                    GridList.Add(new MyHexagon(R, startPos + new Vector3(x * w * .75f, 0, y * h), j));
                 }
                 else
                 {
-                    GridList.Add(new MyHexagon(r, startPos + new Vector3(x * w * .75f + (h / 2), 0, y * h + (h / 2)), j));
+                    GridList.Add(new MyHexagon(R, startPos + new Vector3(x * w * .75f + (h / 2), 0, y * h + (h / 2)), j));
                 }
                 ++j;
             }
         }
 
-        //////////////////////////////////////////////////////////////////////////
-
-        //define boundaries of the hexagons
-        // center first then topleft clockwise all 6outer points +1center
-        //allign with terrain + (terrainOffsets)
-
-        Vector3[] offsets = {
-            new Vector3(0 - (w * .75f / 2),      100, 0 + (h / 2)),
-            new Vector3(-r / 2 - (w * .75f / 2), 100, +r / 2 * Mathf.Sqrt(3) + (h / 2)),
-            new Vector3(+r / 2 - (w * .75f / 2), 100, +r / 2 * Mathf.Sqrt(3) + (h / 2)),
-            new Vector3(+r - (w * .75f / 2),     100, 0 + (h / 2)),
-            new Vector3(+r / 2 - (w * .75f / 2), 100, -r / 2 * Mathf.Sqrt(3) + (h / 2)),
-            new Vector3(-r / 2 - (w * .75f / 2), 100, -r / 2 * Mathf.Sqrt(3) + (h / 2)),
-            new Vector3(-r - (w * .75f / 2),     100, 0 + (h / 2)) };
-
-
-
-        //grid loop defining the grid inside a list: index1 is all hex points for topleft indexlast is bottom right hex points
-        //grid zählt in + Y = 1, also von unten links nach oben links, dann repeat +1X
-        //top left to bot left* sorted
-
-        List<Vector3[]> grid = new();
-
-        for (int x = 0; x < GridX; ++x)
-        {
-            for (int y = 0; y < GridY; ++y)
-            {
-                //create array
-                Vector3[] temp = new Vector3[7];
-                System.Array.Fill(temp, new Vector3(w * .75f + (x * .75f * w), 0, h + (y * h)));
-
-                //add offsets
-                for (int i = 0; i < offsets.Length; ++i)
-                {
-                    temp[i] += offsets[i];
-                }
-
-                grid.Add(temp);
-
-            }
-        }
-
-        hexagonCorners = grid;
-
-        return grid;
+       
     }
 
     public override void SetNeighboursPositions()
@@ -326,7 +264,4 @@ public class HexagonGrid : Grid
 
         return objectt;
     }
-
-    public float GetRadius() => r;
-    public float GetHeight() => r * Mathf.Sqrt(3);
 }

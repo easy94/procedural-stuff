@@ -9,7 +9,7 @@ public class OozeGrid:HexagonGrid
     private readonly List<List<MyHexagon>> resetoozeNeighbour_list;
     
     private Dictionary<MyHexagon, BiomeEnum> _oozedFields = new Dictionary<MyHexagon, BiomeEnum>();
-    public Dictionary<MyHexagon, BiomeEnum> oozedFields { get => _oozedFields; private set => _oozedFields = value; }
+    public Dictionary<MyHexagon, BiomeEnum> OozedFields { get => _oozedFields; private set => _oozedFields = value; }
 
     //constructor
     public OozeGrid(int size, int x)
@@ -21,7 +21,7 @@ public class OozeGrid:HexagonGrid
         //the new real index 
         foreach (var item in GridList)
         {
-            oozedFields.Add(item, default);
+            OozedFields.Add(item, default);
         }
 
         resetoindex = GridList;
@@ -54,7 +54,7 @@ public class OozeGrid:HexagonGrid
         {
             if (random.Next(0, chance) < 7 - i) //if success
             {
-                oozedFields[arg[i]] = (BiomeEnum)biomIndex;//add the position to the return list
+                OozedFields[arg[i]] = (BiomeEnum)biomIndex;//add the position to the return list
                 CalculateChance(chance += 3, NextRoundOfNeighbours(arg[i]),biomIndex);
             }
         }

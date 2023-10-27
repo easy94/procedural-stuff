@@ -19,11 +19,4 @@ public static class GenerateBiomes
         return hexagonGrid;
     }
 
-    //public static float[,] GenerateBiomeNoise(List<Vector3> list, float[,] MapNoiseValues)
-    //{
-
-
-    //    return temp;
-    //}
-
 }

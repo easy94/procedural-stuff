@@ -23,7 +23,7 @@ public class GenerateMap : MonoBehaviour
     [SerializeField] int MapSizeMultiplier;
 
     private readonly int MapWidth = 961;
-    MapData mapData = new MapData();
+    MapData mapData = new();
     public Biomes[] Biomes;
     public bool autoUpdate;
     OozeGrid Ooze;
@@ -68,7 +68,7 @@ public class GenerateMap : MonoBehaviour
     }
     public void GenerateBiomeNoise(float x = 0, float y = 0)
     {
-        mapData.BiomeNoise = GenerateNoise.Generate(Mathf.RoundToInt(Ooze.GetRadius() * 2), biomeData.scale, biomeData.octaves, biomeData.frequency, biomeData.amplitude, random.Next(), biomeData.offsetX + x, biomeData.offsetY + y);
+        mapData.BiomeNoise = GenerateNoise.Generate(Mathf.RoundToInt(Ooze.R * 2), biomeData.scale, biomeData.octaves, biomeData.frequency, biomeData.amplitude, random.Next(), biomeData.offsetX + x, biomeData.offsetY + y);
     }
 
     public void PlaceAsset()
@@ -83,7 +83,7 @@ public class GenerateMap : MonoBehaviour
         List<Vector3> asset_positions = new List<Vector3>();
         int sizeX = mapData.BiomeNoise.GetLength(0);
         GameObject biomeStencil = GameObject.Find("BiomeStencil");
-        Vector3 offset = new(Ooze.GetRadius(), 0, Ooze.GetHeight());
+        Vector3 offset = new(Ooze.R, 0, Ooze.R);
 
         for (int i = 0; i < temp_list.Count; i++)
         {
@@ -127,19 +127,19 @@ public class GenerateMap : MonoBehaviour
         for (int i = 0; i < Biomes.Length; i++)
             arg.Add(new List<MyHexagon>());
 
-        for (int i = 0; i < Ooze.oozedFields.Count; i++)
+        for (int i = 0; i < Ooze.OozedFields.Count; i++)
         {
-            if (Ooze.oozedFields.ElementAt(i).Value == BiomeEnum.Forest)
+            if (Ooze.OozedFields.ElementAt(i).Value == BiomeEnum.Forest)
             {
-                arg[0].Add(Ooze.oozedFields.Keys.ElementAt(i));
+                arg[0].Add(Ooze.OozedFields.Keys.ElementAt(i));
 
             }
-            else if (Ooze.oozedFields.ElementAt(i).Value == BiomeEnum.Plain)
+            else if (Ooze.OozedFields.ElementAt(i).Value == BiomeEnum.Plain)
             {
-                arg[1].Add(Ooze.oozedFields.Keys.ElementAt(i));
+                arg[1].Add(Ooze.OozedFields.Keys.ElementAt(i));
 
             }
-            else if (Ooze.oozedFields.ElementAt(i).Value == BiomeEnum.Something)
+            else if (Ooze.OozedFields.ElementAt(i).Value == BiomeEnum.Something)
             {
 
 
