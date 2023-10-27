@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 16370048234ca3a48afefeaf1da58485, type: 3}
   m_Name: BiomeDataSO
   m_EditorClassIdentifier: 
+  HexGridX: 6
   scale: 22.7
   offsetX: 0
   offsetY: 0

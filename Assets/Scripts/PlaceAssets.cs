@@ -5,14 +5,14 @@ public static class PlaceAssets
     //make randompos before steepcheck
     public static Vector3 CastRayOnTerrain(Vector3 x)
     {
-
     //make the biomestencil tag at position 0 ignore raycast
-        RaycastHit hit = new RaycastHit();
-        Physics.Raycast(x, Vector3.down, out hit, 150f, 0);
+        int layermask = ~(1 << 2);
+        Physics.Raycast(x- new Vector3(0,5,0), Vector3.down, out RaycastHit hit, 150f, layermask);
 
         if (IsNotSteep(hit))
         {
             x = hit.point;
+            //event call here!!!!!!!!!
             return x;
         }
         else
@@ -24,7 +24,6 @@ public static class PlaceAssets
     private static bool IsNotSteep(RaycastHit x)
     {
         Vector3 normalDir = x.normal.normalized;
-        float z = Vector3.Dot(normalDir, Vector3.down.normalized);
 
         if (Vector3.Dot(normalDir, Vector3.down.normalized) < -0.94f)
         {
