@@ -1,19 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using UnityEngine;
+﻿using UnityEngine;
 
 
-public class Hexagon
+public class MyHexagon
 {
     //auto properties
     public float Radius { get; set; }
     public float Height { get; set; }
     public float Width { get; set; }
 
-    public int Index { get; init; }
+    public int? Index { get; init; }
 
     public Vector3 Center { get; set; }
     public Vector3 TopRight { get; set; }
@@ -24,7 +19,11 @@ public class Hexagon
     public Vector3 BotLeft { get;set; }
 
     //ctor
-    public Hexagon(float r, Vector3 pos)
+    public MyHexagon()
+    {
+    }
+
+    public MyHexagon(float r, Vector3 pos, int? index = null)
     {
         Radius = r;
         Width = r * 2;
@@ -36,6 +35,7 @@ public class Hexagon
         BotRight = pos + new Vector3(+r / 2, 100, -r / 2 * Mathf.Sqrt(3));
         BotLeft = pos + new Vector3(-r / 2, 100, -r / 2 * Mathf.Sqrt(3));
         Left = pos + new Vector3(-r, 100, 0);
+        Index = index;
 
     }
 

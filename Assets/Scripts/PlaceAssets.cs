@@ -7,7 +7,7 @@ public static class PlaceAssets
     {
     //make the biomestencil tag at position 0 ignore raycast
         int layermask = ~(1 << 2);
-        Physics.Raycast(x- new Vector3(0,5,0), Vector3.down, out RaycastHit hit, 150f, layermask);
+        Physics.Raycast(x+ new Vector3(0,100,0), Vector3.down, out RaycastHit hit, 150f, layermask);
 
         if (IsNotSteep(hit))
         {

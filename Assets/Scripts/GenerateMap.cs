@@ -75,7 +75,7 @@ public class GenerateMap : MonoBehaviour
     {
 
         //temp_list is the positions the stencil goes to
-        List<List<Vector3>> temp_list = new List<List<Vector3>>();
+        List<List<MyHexagon>> temp_list = new List<List<MyHexagon>>();
         temp_list = SortBiomeList(temp_list);
 
 
@@ -87,9 +87,9 @@ public class GenerateMap : MonoBehaviour
 
         for (int i = 0; i < temp_list.Count; i++)
         {
-            foreach (Vector3 item in temp_list[i])
+            foreach (var item in temp_list[i])
             {
-                biomeStencil.transform.position = item - offset;
+                biomeStencil.transform.position = item.Center - offset;
 
                 GenerateBiomeNoise();
 
@@ -121,11 +121,11 @@ public class GenerateMap : MonoBehaviour
 
     }
 
-    private List<List<Vector3>> SortBiomeList(List<List<Vector3>> arg)
+    private List<List<MyHexagon>> SortBiomeList(List<List<MyHexagon>> arg)
     {
         //necessary
         for (int i = 0; i < Biomes.Length; i++)
-            arg.Add(new List<Vector3>());
+            arg.Add(new List<MyHexagon>());
 
         for (int i = 0; i < Ooze.oozedFields.Count; i++)
         {

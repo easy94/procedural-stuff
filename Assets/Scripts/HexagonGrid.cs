@@ -4,25 +4,26 @@ using UnityEngine;
 
 public abstract class Grid
 {
+    //properties
     public int GridX { get; set; }
     public int GridY { get; set; }
     //how big are the grid fields
     public int Size { get; set; }
 
-
+    //methods
     public abstract List<Vector3[]> ConstructGrid(int amountOfCols, int amountOfRows, Vector3 startPos);
-    public abstract List<Vector3[]> SetNeighboursPositions(int mapsize, int gridX);
+    public abstract void SetNeighboursPositions();
 
 }
 
 public class HexagonGrid : Grid
 {
-    protected float r;
-    public List<Vector3> centralPoints;
+    public float r;
+    //public List<Vector3> centralPoints;
     protected List<Vector3[]> hexagonCorners;
-    public List<List<Vector3>> neighbours;
+    public List<List<MyHexagon>> neighbours;
 
-    public List<Hexagon> GridList { get; set; }
+    public List<MyHexagon> GridList { get; set; }
 
 
     public override List<Vector3[]> ConstructGrid(int sizeM, int amountOfRows, Vector3 startPos)
@@ -30,7 +31,7 @@ public class HexagonGrid : Grid
 
         neighbours = new();
         hexagonCorners = new();
-        centralPoints = new();
+        //centralPoints = new();
         //define general size of the single hexagon
 
         Size = sizeM;
@@ -43,7 +44,8 @@ public class HexagonGrid : Grid
 
         if (GridX % 2 != 0) GridX += 1;
         if (GridY % 2 != 0) GridY += 1;
-//////////////////////////////////////////////
+        //////////////////////////////////////////////
+        ///
         GridList = new();
         int j = 0;
         for (int x = 0; x < GridX; x++)
@@ -51,9 +53,18 @@ public class HexagonGrid : Grid
             for (int y = 0; y < GridY; y++)
             {
                 if (j % 2 == 0)
-                GridList.Add(new Hexagon(r, startPos + new Vector3(x*r*.75f,0,y*), j));
+                {
+                    GridList.Add(new MyHexagon(r, startPos + new Vector3(x * w * .75f, 0, y * h), j));
+                }
+                else
+                {
+                    GridList.Add(new MyHexagon(r, startPos + new Vector3(x * w * .75f + (h / 2), 0, y * h + (h / 2)), j));
+                }
+                ++j;
             }
         }
+
+        //////////////////////////////////////////////////////////////////////////
 
         //define boundaries of the hexagons
         // center first then topleft clockwise all 6outer points +1center
@@ -97,20 +108,15 @@ public class HexagonGrid : Grid
 
         hexagonCorners = grid;
 
-        foreach (var item in grid)
-        {
-            centralPoints.Add(item.First());
-        }
         return grid;
     }
 
-    public override List<Vector3[]> SetNeighboursPositions(int mapsize, int gridX)
+    public override void SetNeighboursPositions()
     {
-
         int k = 0;
-        List<Vector3[]> r_arr = new();
+        List<MyHexagon[]> r_arr = new();
         //all neighbour positions vector3's same order as the construct grid one
-        for (int x = 0; x < gridX; ++x)
+        for (int x = 0; x < GridX; ++x)
         {
             for (int y = 0; y < GridY; ++y)
             {
@@ -118,51 +124,51 @@ public class HexagonGrid : Grid
                 //first
                 if (x == 0 & y == 0)
                 {
-                    Vector3[] temp = { hexagonCorners.ElementAt(k + 1)[0], hexagonCorners.ElementAt(k + GridY)[0] };
+                    MyHexagon[] temp = { GridList.ElementAt(k + 1), GridList.ElementAt(k + GridY) };
                     r_arr.Add(temp);
                 }
                 //last
-                else if (x == gridX - 1 && y == GridY - 1)
+                else if (x == GridX - 1 && y == GridY - 1)
                 {
-                    Vector3[] temp = { hexagonCorners.ElementAt(k - 1)[0], hexagonCorners.ElementAt(k - GridY)[0] };
+                    MyHexagon[] temp = { GridList.ElementAt(k - 1), GridList.ElementAt(k - GridY) };
                     r_arr.Add(temp);
                 }
                 //bot left
                 else if (x == 0 && y == GridY - 1)
                 {
-                    Vector3[] temp = { hexagonCorners.ElementAt(k - 1)[0], hexagonCorners.ElementAt(k + GridY - 1)[0], hexagonCorners.ElementAt(k + GridY)[0] };
+                    MyHexagon[] temp = { GridList.ElementAt(k - 1), GridList.ElementAt(k + GridY - 1), GridList.ElementAt(k + GridY)};
                     r_arr.Add(temp);
                 }
                 //top right
-                else if (x == gridX - 1 && y == 0)
+                else if (x == GridX - 1 && y == 0)
                 {
-                    Vector3[] temp = { hexagonCorners.ElementAt(k + 1)[0], hexagonCorners.ElementAt(k - GridY + 1)[0], hexagonCorners.ElementAt(k - GridY)[0] };
+                    MyHexagon[] temp = {GridList.ElementAt(k + 1), GridList.ElementAt(k - GridY + 1), GridList.ElementAt(k - GridY) };
                     r_arr.Add(temp);
                 }
                 //case 7: every stone not on the outer rows/columns
-                else if (x != 0 && y != 0 && x != gridX - 1 && y != GridY - 1)
+                else if (x != 0 && y != 0 && x != GridX - 1 && y != GridY - 1)
                 {
-                    Vector3[] temp =
+                    MyHexagon[] temp =
                     {
-                    hexagonCorners.ElementAt(k - GridY)[0],
-                    hexagonCorners.ElementAt(k - GridY+1)[0],
-                    hexagonCorners.ElementAt(k - 1)[0],
-                    hexagonCorners.ElementAt(k + 1)[0],
-                    hexagonCorners.ElementAt(k + GridY)[0],
-                    hexagonCorners.ElementAt(k + GridY+ 1)[0],
+                    GridList.ElementAt(k - GridY),
+                    GridList.ElementAt(k - GridY + 1),
+                    GridList.ElementAt(k - 1),
+                    GridList.ElementAt(k + 1),
+                    GridList.ElementAt(k + GridY),
+                    GridList.ElementAt(k + GridY + 1),
                     };
                     r_arr.Add(temp);
                 }
                 //case6: last row every second -1
                 else if (x % 2 == 0 && y == GridY - 1)
                 {
-                    Vector3[] temp =
+                    MyHexagon[] temp =
                     {
-                    hexagonCorners.ElementAt(k - GridY - 1)[0],
-                    hexagonCorners.ElementAt(k - GridY)[0],
-                    hexagonCorners.ElementAt(k - 1)[0],
-                    hexagonCorners.ElementAt(k + GridY - 1)[0],
-                    hexagonCorners.ElementAt(k + 1)[0]
+                    GridList.ElementAt(k - GridY - 1),
+                    GridList.ElementAt(k - GridY),
+                    GridList.ElementAt(k - 1),
+                    GridList.ElementAt(k + GridY - 1),
+                    GridList.ElementAt(k + 1)
                     };
                     r_arr.Add(temp);
                 }
@@ -170,11 +176,11 @@ public class HexagonGrid : Grid
                 else if (x % 2 == 0 && y == 0)
                 {
 
-                    Vector3[] temp =
+                    MyHexagon[] temp =
                     {
-                    hexagonCorners.ElementAt(k - GridY)[0],
-                    hexagonCorners.ElementAt(k + 1)[0],
-                    hexagonCorners.ElementAt(k +GridY)[0],
+                    GridList.ElementAt(k - GridY),
+                    GridList.ElementAt(k + 1),
+                    GridList.ElementAt(k + GridY),
 
                     };
                     r_arr.Add(temp);
@@ -182,11 +188,11 @@ public class HexagonGrid : Grid
                 //case 3: every second in last row
                 else if (x % 2 != 0 && y == GridY - 1)
                 {
-                    Vector3[] temp =
+                    MyHexagon[] temp =
                     {
-                    hexagonCorners.ElementAt(k - GridY)[0],
-                    hexagonCorners.ElementAt(k - 1)[0],
-                    hexagonCorners.ElementAt(k + GridY)[0],
+                    GridList.ElementAt(k - GridY),
+                    GridList.ElementAt(k - 1),
+                    GridList.ElementAt(k + GridY),
 
                     };
                     r_arr.Add(temp);
@@ -194,37 +200,37 @@ public class HexagonGrid : Grid
                 //case:2 every second in first row
                 else if (x % 2 != 0 && y == 0)
                 {
-                    Vector3[] temp =
+                    MyHexagon[] temp =
                     {
-                    hexagonCorners.ElementAt(k - GridY)[0],
-                    hexagonCorners.ElementAt(k - GridY+1)[0],
-                    hexagonCorners.ElementAt(k + 1)[0],
-                    hexagonCorners.ElementAt(k + GridY)[0],
-                    hexagonCorners.ElementAt(k + GridY+ 1)[0],
+                    GridList.ElementAt(k - GridY),
+                    GridList.ElementAt(k - GridY + 1),
+                    GridList.ElementAt(k + 1),
+                    GridList.ElementAt(k + GridY),
+                    GridList.ElementAt(k + GridY + 1),
                     };
                     r_arr.Add(temp);
                 }
                 //case 4: every stone in first column
                 else if (x == 0)
                 {
-                    Vector3[] temp =
+                    MyHexagon[] temp =
                     {
-                    hexagonCorners.ElementAt(k - 1)[0],
-                    hexagonCorners.ElementAt(k + 1)[0],
-                    hexagonCorners.ElementAt(k + GridY)[0],
-                    hexagonCorners.ElementAt(k + GridY- 1)[0],
+                    GridList.ElementAt(k - 1),
+                    GridList.ElementAt(k + 1),
+                    GridList.ElementAt(k + GridY),
+                    GridList.ElementAt(k + GridY - 1),
                     };
                     r_arr.Add(temp);
                 }
                 //case ?: every stone i last column
-                else if (x == gridX - 1)
+                else if (x == GridX - 1)
                 {
-                    Vector3[] temp =
+                    MyHexagon[] temp =
                     {
-                    hexagonCorners.ElementAt(k - 1)[0],
-                    hexagonCorners.ElementAt(k + 1)[0],
-                    hexagonCorners.ElementAt(k - GridY)[0],
-                    hexagonCorners.ElementAt(k - GridY + 1)[0],
+                    GridList.ElementAt(k - 1),
+                    GridList.ElementAt(k + 1),
+                    GridList.ElementAt(k - GridY),
+                    GridList.ElementAt(k - GridY + 1),
                     };
                     r_arr.Add(temp);
                 }
@@ -233,20 +239,19 @@ public class HexagonGrid : Grid
             }
         }
 
-        foreach (Vector3[] item in r_arr)
+        foreach (MyHexagon[] item in r_arr)
         {
             neighbours.Add(item.ToList());
         }
 
-        return r_arr;
     }
 
     public GameObject ConstructHexagonPlane(int r)
     {
-        
+
         float m_hexagonHeight = Mathf.Sqrt(3) * r;
         float m_hexagonWidth = r * 2;
-        
+
         Mesh myMesh = new Mesh();
 
         Vector3[] vertices = new Vector3[r * r];
@@ -273,7 +278,7 @@ public class HexagonGrid : Grid
         {
             tris[i] = x;
 
-            if (x % 5 == 0 && x!=0)
+            if (x % 5 == 0 && x != 0)
                 tris[i + 1] = x - 5;
             else
                 tris[i + 1] = x + 1;
@@ -318,16 +323,10 @@ public class HexagonGrid : Grid
         objectt.GetComponent<MeshFilter>().mesh = myMesh;
         objectt.GetComponent<MeshCollider>().sharedMesh = myMesh;
         myMesh.name = "wtf";
-        
+
         return objectt;
     }
 
-    public float GetRadius()
-    {
-        return r;
-    }
-    public float GetHeight()
-    {
-        return r * Mathf.Sqrt(3);
-    }
+    public float GetRadius() => r;
+    public float GetHeight() => r * Mathf.Sqrt(3);
 }

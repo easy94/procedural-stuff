@@ -5,25 +5,26 @@ using UnityEngine;
 
 public class OozeGrid:HexagonGrid
 {
-    private readonly List<Vector3> resetoindex;
-    private readonly List<List<Vector3>> resetoozeNeighbour_list;
+    private readonly List<MyHexagon> resetoindex;
+    private readonly List<List<MyHexagon>> resetoozeNeighbour_list;
     
-    private Dictionary<Vector3, BiomeEnum> _oozedFields = new Dictionary<Vector3, BiomeEnum>();
-    public Dictionary<Vector3, BiomeEnum> oozedFields { get => _oozedFields; private set => _oozedFields = value; }
+    private Dictionary<MyHexagon, BiomeEnum> _oozedFields = new Dictionary<MyHexagon, BiomeEnum>();
+    public Dictionary<MyHexagon, BiomeEnum> oozedFields { get => _oozedFields; private set => _oozedFields = value; }
 
     //constructor
     public OozeGrid(int size, int x)
     {
-        ConstructGrid(size, x);
-        SetNeighboursPositions(size, x);
+        
+        ConstructGrid(size, x, Vector3.zero);
+        SetNeighboursPositions();
 
         //the new real index 
-        foreach (Vector3 item in centralPoints)
+        foreach (var item in GridList)
         {
             oozedFields.Add(item, default);
         }
 
-        resetoindex = centralPoints;
+        resetoindex = GridList;
         resetoozeNeighbour_list = neighbours;
 
     }
@@ -31,20 +32,20 @@ public class OozeGrid:HexagonGrid
     public OozeGrid OozeProcess(int biomIndex)
     {
         System.Random random = new System.Random(Guid.NewGuid().GetHashCode());
-        Vector3 sample = new Vector3();
-        var shuffledList = this.centralPoints.OrderBy(_ => Guid.NewGuid()).ToList();
-        sample = shuffledList[random.Next(0, this.centralPoints.Count)];
+        MyHexagon sample = new();
+        var shuffledList = this.GridList.OrderBy(_ => Guid.NewGuid()).ToList();
+        sample = shuffledList[random.Next(0, this.GridList.Count)];
 
         
         this.CalculateChance(9, NextRoundOfNeighbours(sample), biomIndex);
 
-        centralPoints = resetoindex;
+        GridList = resetoindex;
         neighbours = resetoozeNeighbour_list;
 
         return this;
     }
 
-    private void CalculateChance(int chance, List<Vector3> arg, int biomIndex)
+    private void CalculateChance(int chance, List<MyHexagon> arg, int biomIndex)
     {
         System.Random random = new System.Random(Guid.NewGuid().GetHashCode());
 
@@ -60,15 +61,15 @@ public class OozeGrid:HexagonGrid
         return;
     }
 
-    private List<Vector3> NextRoundOfNeighbours(Vector3 target)
+    private List<MyHexagon> NextRoundOfNeighbours(MyHexagon target)
     {
         RemoveitFromPossibleOutcomes(target);// delete the position from possibly being inside a neighbour list of some friends
 
-        List<Vector3> result = new();
+        List<MyHexagon> result = new();
 
-        for (int i = 0; i < this.centralPoints.Count; ++i)
+        for (int i = 0; i < this.GridList.Count; ++i)
         {
-            if (this.centralPoints[i] == (target))
+            if (this.GridList[i] == (target))
             {
                 result = this.neighbours[i];
                 break;
@@ -78,7 +79,7 @@ public class OozeGrid:HexagonGrid
         return result;
     }
 
-    private void RemoveitFromPossibleOutcomes(Vector3 v)
+    private void RemoveitFromPossibleOutcomes(MyHexagon v)
     {
         foreach (var item in neighbours)
         {
